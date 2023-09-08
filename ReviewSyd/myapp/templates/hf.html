@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Header</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <script src="" async defer></script>
+    </head>
+    <body>
+        <title>{%block title%}ReviewSyd{%endblock%}</title>
+        <body>
+            <div style="border-bottom: 2px solid black;padding-bottom:1vh;height:20vh">
+                <div style="justify-content: space-between;display:flex;height:10vh">
+                    <div style="display: flex;align-items:center">
+                        <div style="padding-right:1%;">logo</div>
+                        <div>ReviewSyd</div>
+                    </div>
+                    <div style="width:20%; display:flex;flex-direction:column;align-items:center;justify-content:center">
+                        <div style="width:20%;height:50%">Login</div>
+                        <div style="height:50%;">Sign Up</div>
+                    </div>
+                </div>
+                <div style="display:flex;flex-direction: row;height:10vh; justify-content:center;width:100%;">
+                    <button style="width:20%; border-radius: 0px;border-color:black;cursor:pointer;">
+                        Home
+                    </button>
+                    <button style="width:20%; border-radius: 0px;border-color:black;cursor:pointer;">
+                        UoS
+                    </button>
+                    <button style="width:20%; border-radius: 0px;border-color:black;cursor:pointer;">
+                        Find a Tutor
+                    </button>
+                    <button style="width:20%; border-radius: 0px;border-color:black;cursor:pointer;">
+                        Events
+                    </button>
+                </div>
+            </div>
+            <div style="min-height:70vh">{%block content%}{%endblock%}</div>
+            <div style="display:flex;justify-content:space-evenly;justify-self:center;border-top: 2px solid black;padding-top:1vh ">
+                <button style="cursor:pointer;background-color:white;border-width:0px;" onclick="location.href = '/help/'">
+                    Help
+                </button>
+                <button style="cursor:pointer;background-color:white;border-width:0px;" onclick="location.href = '/feedback/'">
+                    Feedback
+                </button>
+                <button style="cursor:pointer;background-color:white;border-width:0px;" onclick="location.href = '/terms-and-conditions/'">
+                    Terms and Conditions
+                </button>
+                <button style="cursor:pointer;background-color:white;border-width:0px;" onclick="location.href = '/privacy/'">
+                    Privacy
+                </button>
+            </div>
+        </body>
+    </body>
+</html>

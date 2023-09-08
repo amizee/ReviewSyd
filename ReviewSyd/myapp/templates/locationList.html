@@ -1,0 +1,9 @@
+{%extends "hf.html"%}{%block title%}Location List{%endblock%}
+{%block content%}
+<h1> Location List </h1>
+{%for location in locations%}
+    <button>
+        {{location.name}}
+    </button>
+{%endfor%}
+{%endblock%}

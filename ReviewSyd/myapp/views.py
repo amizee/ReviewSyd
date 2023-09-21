@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse
 from .models import Locations
-#python(3) manage.py startserver
+#python(3) manage.py runserver
 # Create your views here.
 def home(request):
     return render(request, "home.html")

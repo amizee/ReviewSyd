@@ -1,6 +1,25 @@
 {%extends "hf.html"%}{%block title%}Feedback{%endblock%}
 {%block content%}
-    <p>
-        FAQ
-    </p>
+    <head>
+        <title>FAQ</title>
+    </head>
+    <body>
+        <div class="text-center">
+            <h1>
+                FAQ
+            </h1>
+            <h5>Commonly Asked Questions</h5>
+            <h7>Can't find your question? Please see the feedback Tab to send us any questions you have!</h7>
+        </div>
+        <style>
+            .bold-text {
+                font-weight: bold;
+            }
+        </style>
+            {% for item in faq %}
+            <p><span class="bold-text">{{ item.question }}</span>. </p>
+            <ul>{{ item.answer }}</ul>
+            {% endfor %}
+        </ul>
+    </body>
 {%endblock%}

@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse
-from .models import Locations
+from .models import Locations, Faq
 #python(3) manage.py runserver
 # Create your views here.
 def home(request):
@@ -16,4 +16,5 @@ def locationList(request):
     items = Locations.objects.all()
     return render(request, "locationList.html", {"locations": items})
 def faq(request):
-    return render(request, "faq.html")
+    faq_items = Faq.objects.all()
+    return render(request, "faq.html", {"faq": faq_items})

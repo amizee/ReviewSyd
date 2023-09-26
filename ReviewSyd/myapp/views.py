@@ -15,3 +15,5 @@ def feedback(request):
 def locationList(request):
     items = Locations.objects.all()
     return render(request, "locationList.html", {"locations": items})
+def faq(request):
+    return render(request, "faq.html")

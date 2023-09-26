@@ -8,4 +8,5 @@ urlpatterns=[
     path("privacy/", views.privacy, name="privacy"),
     path("feedback/", views.feedback, name="feedback"),
     path("locationList/", views.locationList, name="location list"),
+    path("faq/", views.faq, name="faq"),
 ]

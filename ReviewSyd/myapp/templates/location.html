@@ -1,10 +1,13 @@
 {%extends "hf.html"%}{%block title%}location{%endblock%}
 {%block content%}
     <div class="px-5">
-        <div>location name</div>
+        <div class="font-weight-bold h1 pb-3">{{location.name}}</div>
         <div class="row">
             <div class="col-6">
-                desc
+                <div>{{location.location}}</div>
+                <div>{{location.phone_number}}</div>
+                <div>{{location.hours}}</div>
+                <div>{{location.website}}</div>
             </div>
             <div class="col-6">
                 pic/features

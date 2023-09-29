@@ -2,7 +2,7 @@
 {%block content%}
 <h1> Location List </h1>
 {%for location in locations%}
-    <button>
+    <button onclick="location.href = '/location/{{location.name}}/'">
         {{location.name}}
     </button>
 {%endfor%}

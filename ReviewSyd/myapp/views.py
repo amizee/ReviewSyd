@@ -18,5 +18,6 @@ def locationList(request):
 def faq(request):
     faq_items = Faq.objects.all()
     return render(request, "faq.html", {"faq": faq_items})
-def location(request):
-    return render(request, "location.html")
+def location(request, loc):
+    location=Locations.objects.get(name=loc)
+    return render(request, "location.html", {"location":location})

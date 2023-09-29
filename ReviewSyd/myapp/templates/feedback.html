@@ -1,0 +1,60 @@
+{%extends "hf.html"%}
+{%block title%}Feedback{%endblock%}
+{%block content%}
+    <p>Feedback</p>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <div class="container">
+        <div class="row">
+            <!-- left side part -->
+            <div class="col-md-6">
+                <form>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" placeholder="user name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="user Email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="subject" class="form-label">Subject</label>
+                        <input type="text" class="form-control" id="subject" placeholder="Subject">
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Message</label>
+                        <textarea class="form-control" id="message" rows="4" placeholder="please leave your message"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </form>
+            </div>
+
+            <!-- right side part -->
+            <div class="col-md-6">
+                <div style="background-color: lightblue; height: 100%; width: 100%;">
+                    <!-- replace with an image later -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('input, textarea').focus(function() {
+                $(this).removeAttr('placeholder');
+            }).blur(function() {
+                if ($(this).attr('id') === 'name') {
+                    $(this).attr('placeholder', 'Name');
+                } else if ($(this).attr('id') === 'email') {
+                    $(this).attr('placeholder', 'Email');
+                } else if ($(this).attr('id') === 'subject') {
+                    $(this).attr('placeholder', 'Subject');
+                } else if ($(this).attr('id') === 'message') {
+                    $(this).attr('placeholder', 'Message');
+                }
+            });
+        });
+    </script>
+{%endblock%}

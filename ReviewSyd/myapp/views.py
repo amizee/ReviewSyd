@@ -12,6 +12,8 @@ def privacy(request):
     return render(request, "privacy.html")
 def feedback(request):
     return render(request, "feedback.html")
+def findTutor(request):
+    return render(request, "findTutor.html")
 def locationList(request):
     items = Locations.objects.all()
     return render(request, "locationList.html", {"locations": items})

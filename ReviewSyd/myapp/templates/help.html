@@ -1,6 +1,38 @@
-{%extends "hf.html"%}{%block title%}Help{%endblock%}
-{%block content%}
-    <p>
-        Help
-    </p>
+{%extends "hf.html"%}{%block title%}Help{%endblock%} {%block content%}
+{% load static %}
+<div class="text-center">
+    <h1>Reach Our Team</h1>
+    <br />
+        <p>
+            Below you can find our contact information, find answers to any questions
+            you may have and leave feedback!
+        </p>
+    <br />
+</div>
+
+<div class="container text-center">
+    <div class="row justify-content-center">
+        <div class="col bg-light mx-3 rounded">
+            <h3 class="mt-5 mb-4">Contact Us</h3>
+            <img class="rounded-0 mb-4" style="width: 50x; height: 50px;" src ="/static/images/email-icon.png" alt=""/>
+            <p class="mb-5">reviewsyd@gmail.com</p>
+        </div>
+        <div class="col bg-light mx-3 rounded">
+            
+            <h3 class="mt-5 mb-4">FAQ</h3>
+            <a href="{% url 'faq' %}">
+                <img class="rounded-0 mb-4" style="width: 50x; height: 50px;" src ="/static/images/faq-icon.png" alt=""/>
+            </a>
+            <p class="mb-5">Search for common questions</p>
+        </div>
+        <div class="col bg-light mx-3 rounded">
+            <h3 class="mt-5 mb-4">Leave Feedback</h3>
+            <a href="{% url 'feedback' %}">
+                <img class="rounded-0 mb-4" style="width: 50x; height: 50px;" src ="/static/images/feedback-icon.png" alt=""/>
+            </a>
+            <p class="mb-5">Provide feedback for our site</p>
+        </div>
+    </div>
+</div>
+
 {%endblock%}

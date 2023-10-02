@@ -19,4 +19,10 @@ class Faq(models.Model):
 
 class Reviews(models.Model):
     name=models.CharField(max_length=255)
+
+
+class Tutor(models.Model):
+    name = models.CharField(max_length=100)
+    subject = models.CharField(max_length=100)
+    email = models.EmailField()
     

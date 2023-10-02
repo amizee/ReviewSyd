@@ -9,6 +9,7 @@ urlpatterns=[
     path("feedback/", views.feedback, name="feedback"),
     path("locationList/", views.locationList, name="location list"),
     path("faq/", views.faq, name="faq"),
+    path('add_tutor/', views.add_tutor, name='add_tutor'),
     path("findTutor/", views.findTutor, name="findTutor"),
     path("location/<str:loc>/", views.location, name="location"),
 ]

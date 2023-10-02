@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, HttpResponse
 from .models import Locations, Faq, Tutor
 #python(3) manage.py runserver
@@ -15,8 +16,25 @@ def feedback(request):
 def findTutor(request):
     return render(request, "findTutor.html")
 def findTutor(request):
-    tutors = Tutor.objects.all()  # 查询数据库以获取所有Tutor对象
-    return render(request, "findTutor.html", {'tutors': tutors})  # 将tutors传递到模板中
+    tutors = Tutor.objects.all()  # get all tutor objects
+    return render(request, "findTutor.html", {'tutors': tutors})
+
+def add_tutor(request):
+    if request.method == 'POST':
+        # get message from user input
+        name = request.POST['name']
+        subject = request.POST['subject']
+        email = request.POST['email']
+
+        # add a new tutor into database
+        tutor = Tutor(name=name, subject=subject, email=email)
+        tutor.save()
+
+        # redirect to a new page
+        return HttpResponseRedirect('/findTutor/')
+
+    # if request is not post, render a blank page
+    return render(request, 'add_tutor.html')
 
 def locationList(request):
     items = Locations.objects.all()

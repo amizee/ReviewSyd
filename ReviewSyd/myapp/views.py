@@ -45,3 +45,11 @@ def faq(request):
 def location(request, loc):
     location=Locations.objects.get(name=loc)
     return render(request, "location.html", {"location":location})
+def accountSettings(request):
+    return render(request, "accountSettings.html")
+def login(request):
+    return render(request, "login.html")
+def signup(request):
+    return render(request, "signup.html")
+def signupCompletion(request):
+    return render(request, "signupCompletion.html")

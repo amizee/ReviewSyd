@@ -15,14 +15,23 @@
         <body>
             <div class="border-bottom border-2 border-dark pb-1 " style="height: 20vh;">
                 <div class="d-flex align-items-center justify-content-between" style="height: 10vh;">
-                    <div class="row">
+                    <div class="row" style="border-radius: 0px; width: 20%; padding-left: 60px;">
                         <div class="col-6">logo</div>
                         <div class="col-6">ReviewSyd</div>
                     </div>
-                    <div class="d-flex flex-column justify-content-center align-items-center" style="width: 20%;">
-                        <div style="width:20%;height:50%">Login</div>
-                        <div style="height:50%;">Sign Up</div>
+
+                <div class="d-flex justify-content-center" style="width: 30%;">
+                    <div class="mx-2 p-2" style="border: 1px solid black; cursor: pointer;" onclick="location.href = '/login/'">
+                        Login
                     </div>
+                    <div class="mx-2 p-2" style="border: 1px solid black; cursor: pointer;" onclick="location.href = '/signup/'">
+                        Sign Up
+                    </div>
+                    <div class="mx-2 p-2" style="border: 1px solid black; cursor: pointer;" onclick="location.href = '/accountSettings/'">
+                        Profile
+                    </div>
+                </div>
+
                 </div>
                 <div class="row justify-content-center" style="height: 10vh; width: 100%; padding-bottom: 1vh;">
                     <button style="width:20%; border-radius: 0px;border-color:black;cursor:pointer;" onclick="location.href = '/'">

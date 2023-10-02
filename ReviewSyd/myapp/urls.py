@@ -11,4 +11,8 @@ urlpatterns=[
     path("faq/", views.faq, name="faq"),
     path("findTutor/", views.findTutor, name="findTutor"),
     path("location/<str:loc>/", views.location, name="location"),
+    path("accountSettings/", views.accountSettings, name="account settings"), 
+    path("login/", views.login, name="login"), 
+    path("signup/", views.signup, name="signup"), 
+    path("signupCompletion/", views.signupCompletion, name="signupCompletion"), 
 ]

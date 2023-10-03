@@ -7,6 +7,7 @@ urlpatterns=[
     path("help/", views.help, name="help"),
     path("privacy/", views.privacy, name="privacy"),
     path("feedback/", views.feedback, name="feedback"),
+    path('send_feedback/', views.send_feedback_email, name='send_feedback'),
     path("locationList/", views.locationList, name="location list"),
     path("faq/", views.faq, name="faq"),
     path('add_tutor/', views.add_tutor, name='add_tutor'),

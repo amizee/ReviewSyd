@@ -1,6 +1,8 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 from .models import Locations, Faq, Tutor
+from django.core.mail import send_mail
+from django.contrib import messages
 #python(3) manage.py runserver
 # Create your views here.
 def home(request):
@@ -21,6 +23,31 @@ def privacy(request):
 
 def feedback(request):
     return render(request, "feedback.html")
+
+
+def send_feedback_email(request):
+    if request.method == 'POST':
+        user_name = request.POST['name']
+        user_email = request.POST['email']
+        subject = request.POST['subject']
+        message = request.POST['message']
+        
+        # form the message sending to us
+        full_message = f"Message from {user_name} <{user_email}>:\n\n{message}"
+        print(full_message)
+        # Send email
+        send_mail(
+            subject,
+            full_message,
+            'shangweiwu1013@gmail.com',  
+            ['shangweiwu1013@gmail.com'], 
+            fail_silently=False,
+        )
+
+        messages.success(request, 'Your feedback has been sent!')
+        return redirect('/feedback/')
+    return render(request, 'feedback.html')
+
 
 
 def findTutor(request):

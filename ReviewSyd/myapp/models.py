@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Locations(models.Model):
@@ -25,4 +26,12 @@ class Tutor(models.Model):
     name = models.CharField(max_length=100)
     subject = models.CharField(max_length=100)
     email = models.EmailField()
-    
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=100)
+    surname = models.CharField(max_length=100)
+    student_id = models.IntegerField(blank=False, default=0)
+    username = models.CharField(max_length=25)
+    email = models.EmailField(max_length=100)
+    is_tutor = models.BooleanField(default=False)

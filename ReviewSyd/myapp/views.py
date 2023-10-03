@@ -33,7 +33,9 @@ def send_feedback_email(request):
         message = request.POST['message']
         
         # form the message sending to us
-        full_message = f"Message from {user_name} <{user_email}>:\n\n{message}"
+        full_message = f"Message from {user_name}\nEmail: {user_email}\n\n{message}"
+
+        # full_message = f"Message from {user_name} <{user_email}>:\n\n{message}"
         print(full_message)
         # Send email
         send_mail(

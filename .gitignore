@@ -5,6 +5,15 @@ __pycache__/
 *.pyd
 
 # IDEs
+.vscode/
 .idea/
 *.swp
 *.swo
+
+# General macOS generated files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# email settings
+.env

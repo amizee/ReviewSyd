@@ -10,22 +10,23 @@
         <div class="row">
             <!-- left side part -->
             <div class="col-md-6">
-                <form>
+                <form method="POST" action="{% url 'send_feedback' %}">
+                    {% csrf_token %}
                     <div class="mb-3">
                         <label for="name" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="name" placeholder="Username">
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Username">
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" placeholder="Email">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Email">
                     </div>
                     <div class="mb-3">
                         <label for="subject" class="form-label">Subject</label>
-                        <input type="text" class="form-control" id="subject" placeholder="Subject">
+                        <input type="text" class="form-control" id="subject" name="subject" placeholder="Subject">
                     </div>
                     <div class="mb-3">
                         <label for="message" class="form-label">Message</label>
-                        <textarea class="form-control" id="message" rows="4" placeholder="please leave your message"></textarea>
+                        <textarea class="form-control" id="message" name="message" rows="4" placeholder="please leave your message"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">Send</button>
                 </form>
@@ -46,13 +47,13 @@
                 $(this).removeAttr('placeholder');
             }).blur(function() {
                 if ($(this).attr('id') === 'name') {
-                    $(this).attr('placeholder', 'Name');
+                    $(this).attr('placeholder', 'Username');
                 } else if ($(this).attr('id') === 'email') {
                     $(this).attr('placeholder', 'Email');
                 } else if ($(this).attr('id') === 'subject') {
                     $(this).attr('placeholder', 'Subject');
                 } else if ($(this).attr('id') === 'message') {
-                    $(this).attr('placeholder', 'Message');
+                    $(this).attr('placeholder', 'please leave your message');
                 }
             });
         });

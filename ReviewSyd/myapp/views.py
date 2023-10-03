@@ -45,6 +45,7 @@ def add_tutor(request):
     # if request is not post, render a blank page
     return render(request, 'add_tutor.html')
 
+
 def locationList(request):
     items = Locations.objects.all()
     return render(request, "locationList.html", {"locations": items})

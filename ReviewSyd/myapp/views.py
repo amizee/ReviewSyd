@@ -43,8 +43,8 @@ def send_feedback_email(request):
         send_mail(
             subject,
             full_message,
-            'shangweiwu1013@gmail.com',  
-            ['shangweiwu1013@gmail.com'], 
+            'robinwu40@gmail.com',  
+            ['robinwu40@gmail.com'], 
             fail_silently=False,
         )
 

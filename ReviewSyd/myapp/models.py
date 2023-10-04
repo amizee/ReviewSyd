@@ -26,6 +26,8 @@ class Tutor(models.Model):
     name = models.CharField(max_length=100)
     subject = models.CharField(max_length=100)
     email = models.EmailField()
+    description = models.TextField(blank=True) 
+    image = models.ImageField(upload_to='tutor_images/', blank=True) 
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

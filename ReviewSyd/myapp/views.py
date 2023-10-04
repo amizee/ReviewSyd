@@ -3,6 +3,8 @@ from django.shortcuts import render, HttpResponse, redirect
 from .models import Locations, Faq, Tutor
 from django.core.mail import send_mail
 from django.contrib import messages
+from django.core.files.storage import FileSystemStorage
+
 #python(3) manage.py runserver
 # Create your views here.
 def home(request):
@@ -59,19 +61,21 @@ def findTutor(request):
 
 def add_tutor(request):
     if request.method == 'POST':
-        # get message from user input
+        # get data from user input
         name = request.POST['name']
         subject = request.POST['subject']
         email = request.POST['email']
-
+        description = request.POST.get('description', '')  # default is empty
+        image = request.FILES.get('image', None)
+        
         # add a new tutor into database
-        tutor = Tutor(name=name, subject=subject, email=email)
+        tutor = Tutor(name=name, subject=subject, email=email, description=description, image=image)
         tutor.save()
 
-        # redirect to a new page
+        # redirect to the findTutor page
         return HttpResponseRedirect('/findTutor/')
 
-    # if request is not post, render a blank page
+    # if request is not post, render a blank page or the form page
     return render(request, 'add_tutor.html')
 
 

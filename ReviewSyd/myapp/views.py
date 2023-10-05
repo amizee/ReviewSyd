@@ -8,7 +8,7 @@ from django.core.files.storage import FileSystemStorage
 #python(3) manage.py runserver
 # Create your views here.
 def home(request):
-    return render(request, "home.html")
+    return render(request, "home.html", {"navbar": "home"})
 
 
 def ts(request):
@@ -56,7 +56,7 @@ def send_feedback_email(request):
 
 def findTutor(request):
     tutors = Tutor.objects.all()  # get all tutor objects
-    return render(request, "findTutor.html", {'tutors': tutors})
+    return render(request, "findTutor.html", {'tutors': tutors, "navbar": "tutor"})
 
 
 def add_tutor(request):
@@ -81,7 +81,7 @@ def add_tutor(request):
 
 def locationList(request):
     items = Locations.objects.all()
-    return render(request, "locationList.html", {"locations": items})
+    return render(request, "locationList.html", {"locations": items, "navbar": "locations"})
 
 
 def faq(request):

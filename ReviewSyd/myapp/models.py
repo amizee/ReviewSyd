@@ -21,7 +21,7 @@ class LocationReviews(models.Model):
     writtenReview = models.CharField(max_length=255)
     likes = models.IntegerField(default=0)
     cleanlinessRating = models.IntegerField(validators=[MaxValueValidator(5)],default=0)
-    ammenitiesRating = models.IntegerField(validators=[MaxValueValidator(5)],default=0)
+    amenitiesRating = models.IntegerField(validators=[MaxValueValidator(5)],default=0)
     noisinessRating = models.IntegerField(validators=[MaxValueValidator(5)],default=0)
     reports = models.IntegerField(default=0)
     location = models.ForeignKey(Locations, on_delete=models.CASCADE, related_name='reviews')

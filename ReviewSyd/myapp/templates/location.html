@@ -1,7 +1,72 @@
 {%extends "hf.html"%}{%block title%}location{%endblock%}
 {%block content%}
     <div class="px-5">
-        <div class="font-weight-bold h1 pb-3">{{location.name}}</div>
+        <div class="font-weight-bold h1 pb-3 text-center">{{location.name}}</div>
+        <div class="row text-center pb-5">
+            <div class="col-3 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Cleanliness Rating</h5>
+                        <p class="card-text">{{location.avgClean}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Amenities Rating</h5>
+                        <p class="card-text">{{location.avgAmen}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Noise Level Rating</h5>
+                        <p class="card-text">{{location.avgNoise}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row text-center pb-5" id="reviews-container">
+            {% for review in location.reviews.all|slice:":3" %}
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Review by {{ review.reviewerSID }}</h5>
+                            <div class="card-text">
+                                <p>{{ review.writtenReview }}</p>
+                                <!-- Display other review details as needed -->
+                                <div class="d-flex">
+                                    <p class="mr-3">Likes: <span id="likes-count-{{ review.pk }}">{{ review.likes }}</span></p>
+                                    <button class="btn btn-primary float-right" onclick="likeReview({{ review.pk }})">Like</button>
+                                    <p class="mr-3">Cleanliness Rating: {{ review.cleanlinessRating }}</p>
+                                    <p class="mr-3">Amenities Rating: {{ review.amenitiesRating }}</p>
+                                    <p>Noisiness Rating: {{ review.noisinessRating }}</p>
+                                    <!-- Add other fields as needed -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <script>
+            function likeReview(reviewId) {
+                // Update the likes count in the DOM without making a backend request
+                const likesElement = document.getElementById(`likes-count-${reviewId}`);
+                
+                // Get the current likes count
+                let currentLikes = parseInt(likesElement.innerText);
+            
+                // Increment the likes count
+                currentLikes++;
+            
+                // Update the likes count in the DOM
+                likesElement.innerText = currentLikes;
+            }
+        </script>
+
         <div class="row">
             <div class="col-6">
                 {% if location.location != "" %}
@@ -53,3 +118,4 @@
         </div>
     </div>
 {%endblock%}
+

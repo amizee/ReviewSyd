@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, HttpResponse, redirect
 from .models import Locations, Faq, Tutor
 from django.core.mail import send_mail
@@ -80,9 +80,14 @@ def add_tutor(request):
 
 
 def locationList(request):
-    items = Locations.objects.all()
-    return render(request, "locationList.html", {"locations": items, "navbar": "locations"})
+    results=Locations.objects.all()
+    return render(request, "locationList.html", {"locations": results})
 
+def LLsearch(request):
+    search=request.GET.get('search','')
+    results=Locations.objects.filter(name__icontains=search)
+    res=[{'name':result.name} for result in results]
+    return JsonResponse(res, safe=False)
 
 def faq(request):
     faq_items = Faq.objects.all()

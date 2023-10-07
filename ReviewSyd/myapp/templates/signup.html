@@ -61,6 +61,7 @@
                 $(this).attr('placeholder', 'Confirm Password');
             }
         });
+        validate()
     });
     // Add an event listener for the form submission
     //Validate fields
@@ -97,6 +98,5 @@
             form.classList.add('was-validated')
         })
     }
-    validate();
 </script>
 {% endblock %}

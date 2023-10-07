@@ -11,6 +11,7 @@ urlpatterns=[
     path("feedback/", views.feedback, name="feedback"),
     path('send_feedback/', views.send_feedback_email, name='send_feedback'),
     path("locationList/", views.locationList, name="location list"),
+    path("locationList/search/", views.LLsearch, name="location_list_search"),
     path("faq/", views.faq, name="faq"),
     path('add_tutor/', views.add_tutor, name='add_tutor'),
     path("findTutor/", views.findTutor, name="findTutor"),

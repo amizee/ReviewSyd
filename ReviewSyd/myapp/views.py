@@ -83,7 +83,7 @@ def locationList(request):
     results=Locations.objects.all()
     return render(request, "locationList.html", {"locations": results})
 
-def LLsearch(request):
+def locSearch(request):
     search=request.GET.get('search','')
     results=Locations.objects.filter(name__icontains=search)
     res=[{'name':result.name} for result in results]
@@ -98,6 +98,9 @@ def location(request, loc):
     location=Locations.objects.get(name=loc)
     return render(request, "location.html", {"location":location})
 
+def locReviews(request, loc):
+    location=Locations.objects.get(name=loc)
+    return render(request, "location.html", {"location":location})
 
 def accountSettings(request):
     return render(request, "accountSettings.html")

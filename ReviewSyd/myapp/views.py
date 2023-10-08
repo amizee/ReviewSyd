@@ -124,11 +124,10 @@ def subReview(request, loc):
     amen= request.GET.get('amen')
     noise= request.GET.get('noise')
     rev= request.GET.get('rev')
-    loc=request.GET.get('loc')
-    locID=Locations.object.get(name=loc)
-    review=LocationReview(reviewerSID = 0, writtenReview = rev, cleanlinessRating = clean, amenitiesRating = amen, noisinessRating = noise, location = loc)
+    locID=Locations.objects.get(name=loc)
+    review=LocationReviews(reviewerSID = 0, writtenReview = rev, cleanlinessRating = clean, amenitiesRating = amen, noisinessRating = noise, location = locID)
     review.save()
-    location=Locations.objects.get(name=loc)
+    location=Locations.objects.filter(name=loc)
     return render(request, "locReviews.html", {"location":location})
 
 @login_required

@@ -139,3 +139,6 @@ import os
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
+
+LOGIN_URL = 'login_view'  # login page
+LOGIN_REDIRECT_URL = '/'  # redirect page

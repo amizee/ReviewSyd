@@ -18,8 +18,9 @@ urlpatterns=[
     path("location/<str:loc>/", views.location, name="location"),
     path("location/<str:loc>/reviews/", views.locReviews, name="locReviews"),
     path("accountSettings/", views.accountSettings, name="account settings"), 
-    path("login/", views.login, name="login"), 
+    path('login/', views.login_view, name='login_view'),
     path("signup/", views.signup, name="signup"), 
+    path('logout/', views.logout_view, name='logout_view'),
     path("signupCompletion/", views.signupCompletion, name="signupCompletion"), 
 ]
 

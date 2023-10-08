@@ -116,6 +116,10 @@ def signup(request):
         first_name = request.POST['first_name']
         surname = request.POST['surname']
         email = request.POST['email'] + "@uni.sydney.edu.au"
+        if User.objects.filter(username=email).exists():
+            # This email (username) is already taken
+            messages.error(request, 'The email address is already in use.')
+            return redirect('signup')  # Redirect back to the signup page
         password = request.POST['password']
         # student_id = request.POST['student_id']
         # username = request.POST['username']

@@ -1,0 +1,133 @@
+{%extends "hf.html"%}
+{%block content%}
+<div class="px-5 py-5">
+    <div id="loc" class="font-weight-bold h1 pb-3 text-center">{{location.name}}</div>
+    <div class="row text-center pb-5">
+        <div class="col-3 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Cleanliness Rating</h5>
+                    <p class="card-text">{{location.avgClean}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Amenities Rating</h5>
+                    <p class="card-text">{{location.avgAmen}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-3 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Noise Level Rating</h5>
+                    <p class="card-text">{{location.avgNoise}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row text-center pb-5" id="reviews-container">
+        {% for review in location.reviews.all|slice:":3" %}
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-text">
+                            <!-- Main row for review details -->
+                            <div class="row no-gutters">
+                                <div class="col-2">
+                                    <div class="card h-100">
+                                        <p class="mr-3">Profile: {{review.reviewerSID}}</p>
+                                    </div>
+                                </div>
+                                <div class="col-5">
+                                    <div class="card h-100">
+                                        <p class="mr-3">{{review.writtenReview}}</p>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="card h-100">
+                                        <div class = "card">
+                                            <p class="mr-3">Cleanliness Rating: {{ review.cleanlinessRating }}</p>
+                                        </div>
+                                        <div class = "card">
+                                            <p class="mr-3">Amenities Rating: {{ review.amenitiesRating }}</p>
+                                        </div>
+                                        <div class = "card">
+                                            <p>Noisiness Rating: {{ review.noisinessRating }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <div class="card h-100">
+                                        <p class="mr-3">Likes: <span id="likes-count-{{ review.pk }}">{{ review.likes }}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <form id="reviewForm" class="needs-validation mx-auto w-50 card" novalidate>{%csrf_token%}
+            <div class="row pt-3">
+                <div class="col-4">
+                    <label for="Cleanliness" class="form-label">Cleanliness</label>
+                    <input type="range" class="form-range" id="Cleanliness" min=1 max=5 step=1 oninput="CValue.value=Cleanliness.value">
+                    <output id="CValue" name="amount" for="rangeInput">3</output>
+                </div>
+                <div class="col-4">
+                    <label for="Amenities" class="form-label">Amenities</label>
+                    <input type="range" class="form-range" id="Amenities" min=1 max=5 step=1 oninput="AValue.value=Amenities.value">
+                    <output id="AValue" name="amount" for="rangeInput">3</output>
+                </div>
+                <div class="col-4">
+                    <label for="Noisiness" class="form-label">Noisiness</label>
+                    <input type="range" class="form-range" id="Noisiness" min=1 max=5 step=1 oninput="NValue.value=Noisiness.value">
+                    <output id="NValue" name="amount" for="rangeInput">3</output>
+                </div>
+            </div>
+            <div class="pt-3 mb-2">
+                <label for="Review" class="form-label">First Name</label>
+                <input data-bs-spy="scroll" type="text" class="form-control" id="Review" placeholder="Review" style="border: 1px solid #ccc;" required>
+                <div class="invalid-feedback">Missing field</div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary btn-sm mb-2 btn-block ">Submit Review</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    $(document).ready(()=>{
+        $('#reviewForm').submit((e)=>{
+            var clean= $('#Cleanliness').val()
+            var amen= $('#Amenities').val()
+            var noise= $('#Noisiness').val()
+            var rev= $('#Review').val()
+            var loc=$('#loc').text()
+            $.ajax({
+                url: 'submit/',
+                type: 'GET',
+                data: {'clean':clean,'amen':amen,'noise':noise,'rev':rev, 'loc':loc},
+                error: (error)=>{console.log(error)},
+            })
+        })
+        validate();
+    })
+    validate=()=>{
+        'use strict'
+        var form=document.querySelector('.needs-validation')
+        form.addEventListener('submit', (e)=>{
+            if(!form.checkValidity()){
+                e.preventDefault()
+                e.stopPropagation()
+            }
+            form.classList.add('was-validated');
+        })
+    }
+</script>
+{%endblock%}

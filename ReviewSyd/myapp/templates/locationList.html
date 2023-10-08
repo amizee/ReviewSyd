@@ -30,9 +30,8 @@
                         res.append('<p>No results found</p>')
                     }
                     else{
-                        console.log(data)
                         Array.prototype.slice.call(data).forEach((location)=>{
-                            res.append("<div><button class='w-100' onclick='location.href = '/location/" + location.name + "/'''>" + location.name + "</button></div>")
+                            res.append("<div><button class=\"w-100\" onclick=\"location.href = '\/location\/" + location.name + "\/'\">" + location.name + "</button></div>")
                         })
                     }
                 },

@@ -17,6 +17,7 @@ urlpatterns=[
     path("findTutor/", views.findTutor, name="findTutor"),
     path("location/<str:loc>/", views.location, name="location"),
     path("location/<str:loc>/reviews/", views.locReviews, name="locReviews"),
+    path("location/<str:loc>/reviews/submit/", views.subReview, name="subReview"),
     path("accountSettings/", views.accountSettings, name="account settings"), 
     path("login/", views.login, name="login"), 
     path("signup/", views.signup, name="signup"), 

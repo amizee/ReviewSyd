@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, HttpResponse, redirect
-from .models import Locations, Faq, Tutor, UserProfile
+from .models import *
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
@@ -101,7 +101,19 @@ def location(request, loc):
 
 def locReviews(request, loc):
     location=Locations.objects.get(name=loc)
-    return render(request, "location.html", {"location":location})
+    return render(request, "locReviews.html", {"location":location})
+
+def subReview(request, loc):
+    clean= request.GET.get('clean')
+    amen= request.GET.get('amen')
+    noise= request.GET.get('noise')
+    rev= request.GET.get('rev')
+    loc=request.GET.get('loc')
+    locID=Locations.object.get(name=loc)
+    review=LocationReview(reviewerSID = 0, writtenReview = rev, cleanlinessRating = clean, amenitiesRating = amen, noisinessRating = noise, location = loc)
+    review.save()
+    location=Locations.objects.get(name=loc)
+    return render(request, "locReviews.html", {"location":location})
 
 def accountSettings(request):
     return render(request, "accountSettings.html")

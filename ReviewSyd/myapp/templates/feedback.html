@@ -1,7 +1,8 @@
 {%extends "hf.html"%}
 {%block title%}Feedback{%endblock%}
 {%block content%}
-    <p>Feedback</p>
+    <h1 class="text-center">User feedback</h1>
+    <br>
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-{{ message.tags }}">
@@ -16,7 +17,7 @@
     <div class="container">
         <div class="row">
             <!-- left side part -->
-            <div class="col-md-6">
+            <div class="col-md-6 mx-auto">
                 
                 <form method="POST" action="{% url 'send_feedback' %}">
                     {% csrf_token %}
@@ -41,11 +42,11 @@
             </div>
 
             <!-- right side part -->
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
                 <div style="background-color: lightblue; height: 100%; width: 100%;">
-                    <!-- replace with an image later -->
+
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 

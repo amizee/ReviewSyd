@@ -1,14 +1,14 @@
-{%extends "hf.html"%}{%block title%}Location List{%endblock%}
+{%extends "hf.html"%}{%block title%}UoS List{%endblock%}
 {%block content%}
-<div class="font-weight-bold h1 pb-3 text-center">Location List</div>
+<div class="font-weight-bold h1 pb-3 text-center">UoS List</div>
 <div class="input-group rounded w-25 mx-auto py-3">
     <input type="search" id="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
 </div>
-<div id="locations" class="mx-auto w-50 pt-2 text-center">
-    {%for location in locations%}
+<div id="UoS" class="mx-auto w-50 pt-2 text-center">
+    {%for Uo in UoS%}
         <div>
-            <button class="w-100" onclick="location.href = '/location/{{location.name}}/'">
-                {{location.name}}
+            <button class="w-100" onclick="location.href = '/uos/{{Uo.name}}/'">
+                {{Uo.name}}
             </button>
         </div>
     {%endfor%}
@@ -20,18 +20,18 @@
         $('#search').change((e)=>{
             var search= $('#search').val()
             $.ajax({
-                url: '/locationList/search/',
+                url: '/UoS/search/',
                 type: 'GET',
                 data: {'search':search },
                 success: (data)=>{
-                    var res=$('#locations')
+                    var res=$('#UoS')
                     res.empty()
                     if(data.length===0){
                         res.append('<p>No results found</p>')
                     }
                     else{
-                        Array.prototype.slice.call(data).forEach((location)=>{
-                            res.append("<div><button class=\"w-100\" onclick=\"location.href = '\/location\/" + location.name + "\/'\">" + location.name + "</button></div>")
+                        Array.prototype.slice.call(data).forEach((Uo)=>{
+                            res.append("<div><button class=\"w-100\" onclick=\"Uo.href = '\/uos\/" + Uo.name + "\/'\">" + Uo.name + "</button></div>")
                         })
                     }
                 },

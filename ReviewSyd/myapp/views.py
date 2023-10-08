@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, HttpResponse, redirect
-from .models import Locations, Faq, Tutor, UserProfile
+from .models import *
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
@@ -116,7 +116,19 @@ def location(request, loc):
 
 def locReviews(request, loc):
     location=Locations.objects.get(name=loc)
-    return render(request, "location.html", {"location":location})
+    return render(request, "locReviews.html", {"location":location})
+
+def subReview(request, loc):
+    clean= request.GET.get('clean')
+    amen= request.GET.get('amen')
+    noise= request.GET.get('noise')
+    rev= request.GET.get('rev')
+    loc=request.GET.get('loc')
+    locID=Locations.object.get(name=loc)
+    review=LocationReview(reviewerSID = 0, writtenReview = rev, cleanlinessRating = clean, amenitiesRating = amen, noisinessRating = noise, location = loc)
+    review.save()
+    location=Locations.objects.get(name=loc)
+    return render(request, "locReviews.html", {"location":location})
 
 def accountSettings(request):
     return render(request, "accountSettings.html")
@@ -171,3 +183,26 @@ def signup(request):
 
 def signupCompletion(request):
     return render(request, "signupCompletion.html")
+
+def UoSList(request):
+    results=UoS.objects.all()
+    return render(request, "UoSList.html", {"UoS": results})
+
+def UoSSearch(request):
+    search=request.GET.get('search','')
+    results=UoS.objects.filter(name__icontains=search)
+    res=[{'name':result.name} for result in results]
+    return JsonResponse(res, safe=False)
+
+def UoStudy(request, UoS):
+    UoS=UoS.objects.get(name=UoS)
+    return render(request, "UoS.html", {"UoS":UoS})
+
+def subComment(request, UoS):
+    com= request.GET.get('com')
+    UoS=request.GET.get('UoS')
+    UoS=Locations.object.get(name=UoS)
+    comment=UoSComment(reviewerSID = 0, comment = com, UoS = UoS)
+    comment.save()
+    UoS=UoS.objects.get(name=UoS)
+    return render(request, "UoS.html", {"UoS":UoS})

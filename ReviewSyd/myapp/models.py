@@ -26,6 +26,15 @@ class LocationReviews(models.Model):
     reports = models.IntegerField(default=0)
     location = models.ForeignKey(Locations, on_delete=models.CASCADE, related_name='reviews')
 
+class UoS(models.Model):
+    code = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+
+class UoSComment(models.Model):
+    commenterSID = models.IntegerField(default=0)
+    comment = models.CharField(max_length=255)
+    uos = models.ForeignKey(UoS, on_delete=models.CASCADE, related_name='comments', default=0)
+
 
 class Faq(models.Model):
     question = models.CharField(max_length=250)

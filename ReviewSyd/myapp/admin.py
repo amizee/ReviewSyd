@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Locations, Faq, Tutor, LocationReviews, UserProfile
+from .models import *
 
 # Register your models here.
 #python(3) manage.py makemigrations
@@ -9,3 +9,5 @@ admin.site.register(Faq)
 admin.site.register(Tutor)
 admin.site.register(LocationReviews)
 admin.site.register(UserProfile)
+admin.site.register(UoS)
+admin.site.register(UoSComment)

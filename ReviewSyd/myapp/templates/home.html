@@ -1,8 +1,30 @@
 {%extends "hf.html"%}
 {%block content%}
+    <style>
+        #map {
+            width: 60vh;
+            height: 60vh;
+            background-color: grey;
+        }
+    </style>
     <p>
         <button style="cursor:pointer;" onclick="location.href = '/locationList/'">
             Location List
         </button>
     </p>
+
+    <div id="map"></div>
+    <script>
+        function initMap() {
+            let usyd = {lat: -33.889822895943595, lng: 151.19212139725983};
+            let unibros = {lat: -33.88955133384251, lng: 151.19108078405674};
+            let map = new google.maps.Map(
+                document.getElementById('map'), {zoom: 18, center: usyd}
+            );
+            let marker = new google.maps.Marker({position: usyd, map: map});
+            let marker2 = new google.maps.Marker({position: unibros, map: map});
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCx7tsiBYdfdoECxfmXorJjV43n9EgoGY0&callback=initMap"></script>
+
 {%endblock%}

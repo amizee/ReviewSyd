@@ -1,0 +1,69 @@
+{%extends "hf.html"%}
+{%block content%}
+<div class="px-5 py-5">
+    <div id="UoS" class="font-weight-bold h1 pb-3 text-center">{{UoS.name}}</div>
+    <div class="row text-center pb-5" id="reviews-container">
+        {% for comment in UoS.comments.all|slice:":3" %}
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-text">
+                            <!-- Main row for review details -->
+                            <div class="row no-gutters">
+                                <div class="col-2">
+                                    <div class="card h-100">
+                                        <p class="mr-3">Profile: {{comment.commenterSID}}</p>
+                                    </div>
+                                </div>
+                                <div class="col-10">
+                                    <div class="card h-100">
+                                        <p class="mr-3">{{comment.comment}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <form id="commentForm" class="needs-validation mx-auto w-50 card" novalidate>{%csrf_token%}
+            <div class="pt-3 mb-2">
+                <label for="Comment" class="form-label">Comment</label>
+                <input data-bs-spy="scroll" type="text" class="form-control" id="Comment" placeholder="Comment" style="border: 1px solid #ccc;" required>
+                <div class="invalid-feedback">Missing field</div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary btn-sm mb-2 btn-block ">Submit Comment</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    $(document).ready(()=>{
+        $('#commentForm').submit((e)=>{
+            var com= $('#Comment').val()
+            var Uos=$('#UoS').text()
+            $.ajax({
+                url: 'submit/',
+                type: 'GET',
+                data: {'com':com, 'UoS':UoS},
+                error: (error)=>{console.log(error)},
+            })
+        })
+        validate();
+    })
+    validate=()=>{
+        'use strict'
+        var form=document.querySelector('.needs-validation')
+        form.addEventListener('submit', (e)=>{
+            if(!form.checkValidity()){
+                e.preventDefault()
+                e.stopPropagation()
+            }
+            form.classList.add('was-validated');
+        })
+    }
+</script>
+{%endblock%}

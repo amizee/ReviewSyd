@@ -154,3 +154,26 @@ def signup(request):
 
 def signupCompletion(request):
     return render(request, "signupCompletion.html")
+
+def UoSList(request):
+    results=UoS.objects.all()
+    return render(request, "UoSList.html", {"UoS": results})
+
+def UoSSearch(request):
+    search=request.GET.get('search','')
+    results=UoS.objects.filter(name__icontains=search)
+    res=[{'name':result.name} for result in results]
+    return JsonResponse(res, safe=False)
+
+def UoStudy(request, UoS):
+    UoS=UoS.objects.get(name=UoS)
+    return render(request, "UoS.html", {"UoS":UoS})
+
+def subComment(request, UoS):
+    com= request.GET.get('com')
+    UoS=request.GET.get('UoS')
+    UoS=Locations.object.get(name=UoS)
+    comment=UoSComment(reviewerSID = 0, comment = com, UoS = UoS)
+    comment.save()
+    UoS=UoS.objects.get(name=UoS)
+    return render(request, "UoS.html", {"UoS":UoS})

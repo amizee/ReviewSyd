@@ -21,7 +21,10 @@ urlpatterns=[
     path("accountSettings/", views.accountSettings, name="account settings"), 
     path("login/", views.login, name="login"), 
     path("signup/", views.signup, name="signup"), 
-    path("signupCompletion/", views.signupCompletion, name="signupCompletion"), 
+    path("signupCompletion/", views.signupCompletion, name="signupCompletion"),
+    path("UoSList/", views.UoSList, name="UoSList"),
+    path("UoSList/search/", views.UoSSearch, name="UoS_search"),
+    path("UoS/<str:UoS>/", views.UoStudy, name="UoS"),  
 ]
 
 if settings.DEBUG:

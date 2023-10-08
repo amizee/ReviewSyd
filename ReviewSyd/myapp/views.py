@@ -72,7 +72,7 @@ def findTutor(request):
     tutors = Tutor.objects.all()  # get all tutor objects
     return render(request, "findTutor.html", {'tutors': tutors, "navbar": "tutor"})
 
-
+@login_required
 def add_tutor(request):
     if request.method == 'POST':
         # get data from user input
@@ -97,7 +97,7 @@ def locationList(request):
     results=Locations.objects.all()
     return render(request, "locationList.html", {"locations": results})
 
-
+@login_required
 def locSearch(request):
     search=request.GET.get('search','')
     results=Locations.objects.filter(name__icontains=search)
@@ -108,16 +108,17 @@ def faq(request):
     faq_items = Faq.objects.all()
     return render(request, "faq.html", {"faq": faq_items})
 
-
+@login_required
 def location(request, loc):
     location=Locations.objects.get(name=loc)
     return render(request, "location.html", {"location":location})
 
-
+@login_required
 def locReviews(request, loc):
     location=Locations.objects.get(name=loc)
     return render(request, "locReviews.html", {"location":location})
 
+@login_required
 def subReview(request, loc):
     clean= request.GET.get('clean')
     amen= request.GET.get('amen')
@@ -130,6 +131,7 @@ def subReview(request, loc):
     location=Locations.objects.get(name=loc)
     return render(request, "locReviews.html", {"location":location})
 
+@login_required
 def accountSettings(request):
     return render(request, "accountSettings.html")
 
@@ -181,23 +183,28 @@ def signup(request):
         return redirect('/login/')  # rederict to sign in page
     return render(request, "signup.html")
 
+@login_required
 def signupCompletion(request):
     return render(request, "signupCompletion.html")
 
+@login_required
 def UoSList(request):
     results=UoS.objects.all()
     return render(request, "UoSList.html", {"UoS": results})
 
+@login_required
 def UoSSearch(request):
     search=request.GET.get('search','')
     results=UoS.objects.filter(name__icontains=search)
     res=[{'name':result.name} for result in results]
     return JsonResponse(res, safe=False)
 
+@login_required
 def UoStudy(request, UoS):
     UoS=UoS.objects.get(name=UoS)
     return render(request, "UoS.html", {"UoS":UoS})
 
+@login_required
 def subComment(request, UoS):
     com= request.GET.get('com')
     UoS=request.GET.get('UoS')

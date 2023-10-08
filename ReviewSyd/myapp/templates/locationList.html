@@ -1,9 +1,44 @@
 {%extends "hf.html"%}{%block title%}Location List{%endblock%}
 {%block content%}
 <h1> Location List </h1>
-{%for location in locations%}
-    <button onclick="location.href = '/location/{{location.name}}/'">
-        {{location.name}}
-    </button>
-{%endfor%}
+<div class="input-group rounded w-25 mx-auto py-3">
+    <input type="search" id="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+</div>
+<div id="locations" class="mx-auto w-50 pt-2 text-center">
+    {%for location in locations%}
+        <div>
+            <button class="w-100" onclick="location.href = '/location/{{location.name}}/'">
+                {{location.name}}
+            </button>
+        </div>
+    {%endfor%}
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    $(document).ready(()=>{
+        $('#search').change((e)=>{
+            var search= $('#search').val()
+            $.ajax({
+                url: '/locationList/search/',
+                type: 'GET',
+                data: {'search':search },
+                success: (data)=>{
+                    var res=$('#locations')
+                    res.empty()
+                    if(data.length===0){
+                        res.append('<p>No results found</p>')
+                    }
+                    else{
+                        console.log(data)
+                        Array.prototype.slice.call(data).forEach((location)=>{
+                            res.append("<div><button class='w-100' onclick='location.href = '/location/" + location.name + "/'''>" + location.name + "</button></div>")
+                        })
+                    }
+                },
+                error: (error)=>{console.log(error)},
+            })
+        })
+    })
+</script>
 {%endblock%}

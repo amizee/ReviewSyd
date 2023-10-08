@@ -7,26 +7,33 @@
         <div class="text-center"> <!-- Center-align the heading -->
             <h3 class="py-4 px-3">Create an Account</h3>
         </div>
-        <form id="signupForm" action="/signupCompletion" method="post">
+        <form id="signupForm" action="/signupCompletion/" method="post" class="needs-validation" novalidate>{% csrf_token %}
             <div class="mb-3">
                 <label for="firstname" class="form-label">First Name</label>
-                <input type="text" class="form-control" id="firstname" placeholder="First Name" style="border: 1px solid #ccc;">
+                <input type="text" class="form-control" id="firstname" placeholder="First Name" style="border: 1px solid #ccc;" required>
+                <div class="invalid-feedback">Invalid First Name</div>
             </div>
             <div class="mb-3">
                 <label for="surname" class="form-label">Surname</label>
-                <input type="text" class="form-control" id="surname" placeholder="Surname" style="border: 1px solid #ccc;">
+                <input type="text" class="form-control" id="surname" placeholder="Surname" style="border: 1px solid #ccc;" required>
+                <div class="invalid-feedback">Invalid Surname</div>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" placeholder="Email" style="border: 1px solid #ccc;">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="email" placeholder="Email" style="border: 1px solid #ccc;" required>
+                    <span class="input-group-text">@uni.sydney.edu.au</span>
+                    <div class="invalid-feedback">Invalid Email</div>
+                </div>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" placeholder="Password" style="border: 1px solid #ccc;">
+                <input type="password" class="form-control" id="password" placeholder="Password" style="border: 1px solid #ccc;" required>
+                <div class="invalid-feedback">Missing Password</div>
             </div>
             <div class="mb-3">
                 <label for="confirm-password" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" id="confirm-password" placeholder="Confirm Password" style="border: 1px solid #ccc;">
+                <input type="password" class="form-control" id="confirm-password" placeholder="Confirm Password" style="border: 1px solid #ccc;" >
             </div>
 
             <div class="text-center"> <!-- Center-align the button -->
@@ -54,12 +61,42 @@
                 $(this).attr('placeholder', 'Confirm Password');
             }
         });
+        validate()
     });
-    
     // Add an event listener for the form submission
-    document.getElementById('signupForm').addEventListener('submit', function(e) {
-        e.preventDefault(); // Prevent the default form submission
-        window.location.href = '/signupCompletion';
-    });
+    //Validate fields
+    validate=()=>{
+        'use strict'
+        var form=document.querySelector('.needs-validation')
+        form.addEventListener('submit', (e)=>{
+            if(!form.checkValidity()){
+                e.preventDefault()
+                e.stopPropagation()
+            }
+            var conpass=document.querySelector('#confirm-password')
+            if(conpass.value!==document.querySelector('#password').value)
+            {
+                var invalidFeedback=document.createElement("div")
+                invalidFeedback.textContent="Passwords must match"
+                invalidFeedback.classList.add("invalid-feedback")
+                if (conpass.nextElementSibling!==null) {
+                    conpass.nextElementSibling.remove();
+                    conpass.classList.remove("is-invalid");
+                }
+                conpass.insertAdjacentHTML("afterend", invalidFeedback.outerHTML)
+                conpass.classList.add("is-invalid")
+                
+                e.preventDefault()
+                e.stopPropagation()
+            }
+            else{
+                if (conpass.nextElementSibling!==null) {
+                    conpass.nextElementSibling.remove();
+                    conpass.classList.remove("is-invalid");
+                }
+            }
+            form.classList.add('was-validated')
+        })
+    }
 </script>
 {% endblock %}

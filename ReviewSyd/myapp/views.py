@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, HttpResponse, redirect
 from .models import Locations, Faq, Tutor
 from django.core.mail import send_mail
@@ -8,7 +8,7 @@ from django.core.files.storage import FileSystemStorage
 #python(3) manage.py runserver
 # Create your views here.
 def home(request):
-    return render(request, "home.html")
+    return render(request, "home.html", {"navbar": "home"})
 
 
 def ts(request):
@@ -43,8 +43,8 @@ def send_feedback_email(request):
         send_mail(
             subject,
             full_message,
-            'shangweiwu1013@gmail.com',  
-            ['shangweiwu1013@gmail.com'], 
+            'robinwu40@gmail.com',  
+            ['robinwu40@gmail.com'], 
             fail_silently=False,
         )
 
@@ -56,7 +56,7 @@ def send_feedback_email(request):
 
 def findTutor(request):
     tutors = Tutor.objects.all()  # get all tutor objects
-    return render(request, "findTutor.html", {'tutors': tutors})
+    return render(request, "findTutor.html", {'tutors': tutors, "navbar": "tutor"})
 
 
 def add_tutor(request):
@@ -80,9 +80,14 @@ def add_tutor(request):
 
 
 def locationList(request):
-    items = Locations.objects.all()
-    return render(request, "locationList.html", {"locations": items})
+    results=Locations.objects.all()
+    return render(request, "locationList.html", {"locations": results})
 
+def locSearch(request):
+    search=request.GET.get('search','')
+    results=Locations.objects.filter(name__icontains=search)
+    res=[{'name':result.name} for result in results]
+    return JsonResponse(res, safe=False)
 
 def faq(request):
     faq_items = Faq.objects.all()
@@ -93,6 +98,9 @@ def location(request, loc):
     location=Locations.objects.get(name=loc)
     return render(request, "location.html", {"location":location})
 
+def locReviews(request, loc):
+    location=Locations.objects.get(name=loc)
+    return render(request, "location.html", {"location":location})
 
 def accountSettings(request):
     return render(request, "accountSettings.html")

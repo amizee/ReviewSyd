@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator
+
 
 # Create your models here.
 class Locations(models.Model):
@@ -13,6 +15,17 @@ class Locations(models.Model):
     avgAmen=models.IntegerField(blank=True, default=0)
     avgClean=models.IntegerField(blank=True, default=0)
     nearPlaces=models.CharField(max_length=255, blank=True)
+
+class LocationReviews(models.Model):
+    reviewerSID = models.IntegerField()
+    writtenReview = models.CharField(max_length=255)
+    likes = models.IntegerField(default=0)
+    cleanlinessRating = models.IntegerField(validators=[MaxValueValidator(5)],default=0)
+    amenitiesRating = models.IntegerField(validators=[MaxValueValidator(5)],default=0)
+    noisinessRating = models.IntegerField(validators=[MaxValueValidator(5)],default=0)
+    reports = models.IntegerField(default=0)
+    location = models.ForeignKey(Locations, on_delete=models.CASCADE, related_name='reviews')
+
 
 class Faq(models.Model):
     question = models.CharField(max_length=250)

@@ -19,12 +19,13 @@ urlpatterns=[
     path("location/<str:loc>/reviews/", views.locReviews, name="locReviews"),
     path("location/<str:loc>/reviews/submit/", views.subReview, name="subReview"),
     path("accountSettings/", views.accountSettings, name="account settings"), 
-    path("login/", views.login, name="login"), 
+    path('login/', views.login_view, name='login_view'),
     path("signup/", views.signup, name="signup"), 
-    path("signupCompletion/", views.signupCompletion, name="signupCompletion"),
+    path("signupCompletion/", views.signupCompletion, name="signupCompletion"), 
     path("UoSList/", views.UoSList, name="UoSList"),
     path("UoSList/search/", views.UoSSearch, name="UoS_search"),
     path("UoS/<str:UoS>/", views.UoStudy, name="UoS"),  
+    path('logout/', views.logout_view, name='logout_view'),
 ]
 
 if settings.DEBUG:

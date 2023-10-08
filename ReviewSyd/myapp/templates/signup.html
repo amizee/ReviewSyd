@@ -2,7 +2,7 @@
 {% block title %}Sign Up{% endblock %}
 {% block content %}
 
-<!-- if email address in use, show error message -->
+
 <style>
     .custom-alert {
         color: red;
@@ -10,14 +10,6 @@
         font-size: larger;
     }
 </style>
-
-{% if messages %}
-    <div class="custom-alert">
-        {% for message in messages %}
-            <strong>{{ message }}</strong>
-        {% endfor %}
-    </div>
-{% endif %}
 
 <div class="container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
     <div class="col-md-6">
@@ -46,6 +38,15 @@
                     <div class="invalid-feedback">Invalid Email</div>
                 </div>
             </div>
+            
+            <!-- if email address in use, show error message -->
+            {% if messages %}
+                <div class="custom-alert justify-content-center">
+                    {% for message in messages %}
+                        <strong>{{ message }}</strong>
+                    {% endfor %}
+                </div>
+            {% endif %}
 
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>

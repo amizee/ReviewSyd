@@ -5,9 +5,17 @@ from django.core.mail import send_mail
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+from django.contrib.auth import login as auth_login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+
+
+
 
 #python(3) manage.py runserver
 # Create your views here.
+@login_required
 def home(request):
     return render(request, "home.html", {"navbar": "home"})
 
@@ -26,6 +34,11 @@ def privacy(request):
 
 def feedback(request):
     return render(request, "feedback.html")
+
+def logout_view(request):
+    logout(request)
+    # Redirect to a success page.
+    return redirect('/login/')
 
 
 def send_feedback_email(request):
@@ -54,7 +67,7 @@ def send_feedback_email(request):
     return render(request, 'feedback.html')
 
 
-
+@login_required
 def findTutor(request):
     tutors = Tutor.objects.all()  # get all tutor objects
     return render(request, "findTutor.html", {'tutors': tutors, "navbar": "tutor"})
@@ -79,10 +92,11 @@ def add_tutor(request):
     # if request is not post, render a blank page or the form page
     return render(request, 'add_tutor.html')
 
-
+@login_required
 def locationList(request):
     results=Locations.objects.all()
     return render(request, "locationList.html", {"locations": results})
+
 
 def locSearch(request):
     search=request.GET.get('search','')
@@ -98,6 +112,7 @@ def faq(request):
 def location(request, loc):
     location=Locations.objects.get(name=loc)
     return render(request, "location.html", {"location":location})
+
 
 def locReviews(request, loc):
     location=Locations.objects.get(name=loc)
@@ -119,8 +134,22 @@ def accountSettings(request):
     return render(request, "accountSettings.html")
 
 
-def login(request):
-    return render(request, "login.html")
+def login_view(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        password = request.POST['password']
+
+        # Django authenticaiton
+        user = authenticate(request, username=email, password=password)
+        
+        if user is not None:
+            auth_login(request, user)
+            print('Yes')
+            return redirect('/')
+        else:
+            print('No')
+            messages.error(request, 'Invalid email or password !!')
+    return render(request, 'login.html')
 
 
 def signup(request):

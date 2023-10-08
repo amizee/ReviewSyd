@@ -74,8 +74,19 @@
                                     >Find a tutor</a
                                 >
                             </li>
-                            <a href="{% url 'login_view' %}" class="btn btn-primary rounded-2">Login</a>
-                            <a href="{% url 'logout_view' %}" class="btn btn-dark rounded-2">Logout</a>
+
+                            {% if user.is_authenticated %}
+                                <li class="nav-item">
+                                    <span class="nav-link" style="color: black;">Hello {{ user.first_name }} &nbsp;</span>
+                                </li>
+                            {% endif %}
+
+                            {% if not user.is_authenticated %}
+                                <a href="{% url 'login_view' %}" class="btn btn-primary rounded-2">Login</a>
+                            {% else %}
+                                <a href="{% url 'logout_view' %}" class="btn btn-dark rounded-2">Logout</a>
+                            {% endif %}
+
                         </ul>
                     </div>
                 </div>

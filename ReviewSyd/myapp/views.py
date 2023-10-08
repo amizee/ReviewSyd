@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from django.shortcuts import get_object_or_404
 
 
 
@@ -83,7 +84,7 @@ def add_tutor(request):
         image = request.FILES.get('image', None)
         
         # add a new tutor into database
-        tutor = Tutor(name=name, subject=subject, email=email, description=description, image=image)
+        tutor = Tutor(user=request.user, name=name, subject=subject, email=email, description=description, image=image)
         tutor.save()
 
         # redirect to the findTutor page
@@ -91,6 +92,17 @@ def add_tutor(request):
 
     # if request is not post, render a blank page or the form page
     return render(request, 'add_tutor.html')
+
+
+def remove_tutor(request, tutor_id):
+    # tutor to be remove
+    tutor = get_object_or_404(Tutor, id=tutor_id)
+
+    # insure to be the creator
+    if request.user == tutor.user:
+        tutor.delete()
+    
+    return redirect('findTutor')  
 
 @login_required
 def locationList(request):
@@ -163,24 +175,23 @@ def signup(request):
             messages.error(request, 'The email address is already in use.')
             return redirect('signup')  # Redirect back to the signup page
         password = request.POST['password']
-        # student_id = request.POST['student_id']
-        # username = request.POST['username']
-        # is_tutor = 'is_tutor' in request.POST
 
         # create a new user
-        user = User.objects.create_user(username=email,  password=password)
+        user = User.objects.create_user(username=email, email=email, password=password, first_name=first_name, last_name=surname)
 
         # create a userprofile
-        user_profile = UserProfile(
-            user=user,
-            first_name=first_name,
-            surname=surname,
-            email=email,
-        )
+        # user_profile = UserProfile(
+        #     user=user,
+        #     first_name=first_name,
+        #     surname=surname,
+        #     email=email,
+        # )
+        user_profile = UserProfile(user=user)
         user_profile.save()
 
         return redirect('/login/')  # rederict to sign in page
     return render(request, "signup.html")
+
 
 @login_required
 def signupCompletion(request):

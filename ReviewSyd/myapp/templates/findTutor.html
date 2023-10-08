@@ -37,6 +37,16 @@
         <!-- Loop to generate tutors from database -->
         {% for tutor in tutors %}
         <div class="col-md-5 tutor">
+          <!-- remove button -->
+
+          {% if request.user == tutor.user %}
+              <!-- Remove Button -->
+              <form method="post" action="{% url 'remove_tutor' tutor.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+              </form>
+          {% endif %}
+          
             <div class="border p-3" style="height: 280px; overflow-y: auto;">
               <div class="d-flex align-items-center justify-content-between flex-wrap"> <!-- Add flex-wrap here -->
                     <div>

@@ -7,30 +7,35 @@
         <div class="text-center"> <!-- Center-align the heading -->
             <h3 class="py-4 px-3">Create an Account</h3>
         </div>
-        <form id="signupForm" action="/signupCompletion/" method="post" class="needs-validation" novalidate>{% csrf_token %}
+        <form id="signupForm" action="/signup/" method="post" class="needs-validation" novalidate>{% csrf_token %}
+
             <div class="mb-3">
                 <label for="firstname" class="form-label">First Name</label>
-                <input type="text" class="form-control" id="firstname" placeholder="First Name" style="border: 1px solid #ccc;" required>
+                <input type="text" class="form-control" id="firstname" name="first_name" placeholder="First Name" style="border: 1px solid #ccc;" required>
                 <div class="invalid-feedback">Invalid First Name</div>
             </div>
+
             <div class="mb-3">
                 <label for="surname" class="form-label">Surname</label>
-                <input type="text" class="form-control" id="surname" placeholder="Surname" style="border: 1px solid #ccc;" required>
+                <input type="text" class="form-control" id="surname" name="surname" placeholder="Surname" style="border: 1px solid #ccc;" required>
                 <div class="invalid-feedback">Invalid Surname</div>
             </div>
+
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" id="email" placeholder="Email" style="border: 1px solid #ccc;" required>
+                    <input type="text" class="form-control" id="email" name="email" placeholder="Email" style="border: 1px solid #ccc;" required>
                     <span class="input-group-text">@uni.sydney.edu.au</span>
                     <div class="invalid-feedback">Invalid Email</div>
                 </div>
             </div>
+
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" placeholder="Password" style="border: 1px solid #ccc;" required>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" style="border: 1px solid #ccc;" required>
                 <div class="invalid-feedback">Missing Password</div>
             </div>
+
             <div class="mb-3">
                 <label for="confirm-password" class="form-label">Confirm Password</label>
                 <input type="password" class="form-control" id="confirm-password" placeholder="Confirm Password" style="border: 1px solid #ccc;" >
@@ -42,6 +47,7 @@
         </form>
     </div>
 </div>
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>

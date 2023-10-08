@@ -1,9 +1,10 @@
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, HttpResponse, redirect
-from .models import Locations, Faq, Tutor
+from .models import Locations, Faq, Tutor, UserProfile
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.models import User
 
 #python(3) manage.py runserver
 # Create your views here.
@@ -111,8 +112,29 @@ def login(request):
 
 
 def signup(request):
-    return render(request, "signup.html")
+    if request.method == "POST":
+        first_name = request.POST['first_name']
+        surname = request.POST['surname']
+        email = request.POST['email'] + "@uni.sydney.edu.au"
+        password = request.POST['password']
+        # student_id = request.POST['student_id']
+        # username = request.POST['username']
+        # is_tutor = 'is_tutor' in request.POST
 
+        # create a new user
+        user = User.objects.create_user(username=email,  password=password)
+
+        # create a userprofile
+        user_profile = UserProfile(
+            user=user,
+            first_name=first_name,
+            surname=surname,
+            email=email,
+        )
+        user_profile.save()
+
+        return redirect('/login/')  # rederict to sign in page
+    return render(request, "signup.html")
 
 def signupCompletion(request):
     return render(request, "signupCompletion.html")

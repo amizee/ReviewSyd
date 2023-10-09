@@ -11,6 +11,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import check_password
+from django.utils.crypto import get_random_string
+from django.utils import timezone
+from .models import PasswordResetToken
+from .forms import EmailForm, PasswordResetForm
 
 
 
@@ -279,3 +283,59 @@ def subComment(request, UoS):
     comment.save()
     UoS=UoS.objects.get(name=UoS)
     return render(request, "UoS.html", {"UoS":UoS})
+
+def request_password_reset(request):
+    message = ""
+    success_message = ""
+    if request.method == "POST":
+        form = EmailForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            user = User.objects.filter(email=email).first()
+            if user:
+                token = get_random_string(32)
+                expiration_date = timezone.now() + timezone.timedelta(hours=1)
+                PasswordResetToken.objects.create(user=user, token=token, expiration_date=expiration_date)
+                reset_url = f"http://127.0.0.1:8000/reset-password?token={token}"
+                send_mail('Password Reset', f'Click {reset_url} to reset your password.', 'robinwu40@gmail.com', [email])
+                success_message = "Reset link successfully sent."
+            else:
+                message = "This is not a valid email address."
+    else:
+        form = EmailForm()
+
+    return render(request, 'request_password_reset.html', {'form': form, 'message': message, 'success_message': success_message})
+
+
+
+
+def reset_password(request):
+    token = request.GET.get('token')
+    if not token:
+        print("No token provided.")
+        return redirect('request_password_reset')
+    
+    reset_token = PasswordResetToken.objects.filter(token=token, expiration_date__gte=timezone.now()).first()
+    if not reset_token:
+        print(f"Invalid or expired token: {token}")
+        return render(request, 'invalid_or_expired_token.html')
+
+    if request.method == "POST":
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            new_password = form.cleaned_data.get('new_password')
+            confirm_password = form.cleaned_data.get('confirm_password')
+            if new_password == confirm_password:
+                user = reset_token.user
+                user.set_password(new_password)
+                user.save()
+                reset_token.delete()
+                print(f"Password reset successfully for user: {user.username}")
+                return redirect('/login/')
+            else:
+                print("New password and confirm password do not match.")
+        else:
+            print(f"Form errors: {form.errors}")
+    else:
+        form = PasswordResetForm()
+    return render(request, 'reset_password.html', {'form': form})

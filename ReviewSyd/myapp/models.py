@@ -57,3 +57,9 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     student_id = models.IntegerField(blank=False, default=0)
     is_tutor = models.BooleanField(default=False)
+
+
+class PasswordResetToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    token = models.CharField(max_length=64)
+    expiration_date = models.DateTimeField()

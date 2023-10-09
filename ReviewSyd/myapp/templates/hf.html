@@ -77,7 +77,7 @@
 
                             {% if user.is_authenticated %}
                                 <li class="nav-item">
-                                    <span class="nav-link" style="color: black;">Hello {{ user.first_name }} &nbsp;</span>
+                                    <a href="{% url 'accountSettings' %}" class="nav-link" style="color: blue;">{{ user.first_name }} &nbsp;</a>
                                 </li>
                             {% endif %}
 

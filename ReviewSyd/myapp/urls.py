@@ -28,6 +28,8 @@ urlpatterns=[
     path("UoSList/search/", views.UoSSearch, name="UoS_search"),
     path("UoS/<str:UoS>/", views.UoStudy, name="UoS"),  
     path('logout/', views.logout_view, name='logout_view'),
+    path('request-password-reset/', views.request_password_reset, name='request_password_reset'),
+    path('reset-password/', views.reset_password, name='reset_password'),
 ]
 
 if settings.DEBUG:

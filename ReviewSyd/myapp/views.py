@@ -142,6 +142,17 @@ def subReview(request, loc):
     location=Locations.objects.filter(name=loc)
     return render(request, "locReviews.html", {"location":location})
 
+def updReview(request, loc):
+    val=request.GET.get('val')
+    primKey=request.GET.get('pk')
+    location=Locations.objects.get(name=loc)
+    Review=location.locationReview.get(pk=primKey)
+    Review.likes+=val
+    Review.save(update_fields=['likes'])
+    ret=[{'likes': Review.likes, 'pk':primKey}]
+    return JsonResponse(ret,safe=False)
+
+
 @login_required
 def accountSettings(request):
     return render(request, "accountSettings.html")

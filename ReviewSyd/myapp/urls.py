@@ -19,6 +19,7 @@ urlpatterns=[
     path("location/<str:loc>/", views.location, name="location"),
     path("location/<str:loc>/reviews/", views.locReviews, name="locReviews"),
     path("location/<str:loc>/reviews/submit/", views.subReview, name="subReview"),
+    path("location/<str:loc>/reviews/like/", views.updReview, name="subReview"),
     path("accountSettings/", views.accountSettings, name="account settings"), 
     path('login/', views.login_view, name='login_view'),
     path("signup/", views.signup, name="signup"), 

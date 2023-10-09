@@ -10,6 +10,7 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.hashers import check_password
 
 
 
@@ -93,7 +94,7 @@ def add_tutor(request):
     # if request is not post, render a blank page or the form page
     return render(request, 'add_tutor.html')
 
-
+@login_required
 def remove_tutor(request, tutor_id):
     # tutor to be remove
     tutor = get_object_or_404(Tutor, id=tutor_id)
@@ -103,6 +104,9 @@ def remove_tutor(request, tutor_id):
         tutor.delete()
     
     return redirect('findTutor')  
+
+
+
 
 @login_required
 def locationList(request):
@@ -143,9 +147,51 @@ def subReview(request, loc):
     location=Locations.objects.get(name=loc)
     return render(request, "locReviews.html", {"location":location})
 
+
 @login_required
 def accountSettings(request):
-    return render(request, "accountSettings.html")
+    if request.method == 'POST':
+        # Check if only verifying the current password
+        if 'current_password' in request.POST and 'new_password' not in request.POST:
+            current_password = request.POST['current_password']
+            user = request.user
+            if user.check_password(current_password):
+                return JsonResponse({"is_correct": True})
+            else:
+                return JsonResponse({"is_correct": False, "message": "Incorrect current password."}, status=400)
+
+        # Processing the full form submission:
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        current_password = request.POST['current_password']
+        new_password = request.POST['new_password']
+        confirm_new_password = request.POST['confirm_new_password']
+
+        # Get the current user
+        user = request.user
+        
+        if not current_password or not new_password or not confirm_new_password:
+            return JsonResponse({"success": False, "message": "Passwords cannot be empty."}, status=400)
+
+        # Validate the current password
+        if not user.check_password(current_password):
+            return JsonResponse({"success": False, "message": "Incorrect current password."}, status=400)
+
+        # Check if the new password matches the confirm password
+        if new_password != confirm_new_password:
+            return JsonResponse({"success": False, "message": "New password and confirm password do not match."}, status=400)
+
+        # If passwords match, then save the new password
+        user.set_password(new_password)
+
+        # Update first name and last name
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+
+        return JsonResponse({"success": True, "message": "Account settings updated successfully!"})
+
+    return render(request, "accountSettings.html", {"current_user": request.user})
 
 
 def login_view(request):

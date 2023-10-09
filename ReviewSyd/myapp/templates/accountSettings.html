@@ -3,51 +3,137 @@
 {% block content %}
     <div class="container">
         <div class="row">
-            <!-- Side column with tabs -->
-            <div class="col-md-3">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Manage Your Account</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Sign Out</a>
-                    </li>
-                </ul>
-            </div>
+            
             <!-- Main content section -->
-            <div class="col-md-9">
+            <div class="col-md-6 mx-auto">
                 <h3 class="pt-2 pb-2">Account Settings</h3>
-                <form>
+
+                <form id="accountSettingsForm" action="{% url 'accountSettings' %}" method="post">
+                    {% csrf_token %}
                     <div class="mb-3">
                         <label for="firstName" class="form-label">First Name</label>
-                        <input type="text" class="form-control" id="firstName" placeholder="First Name">
+                        <input type="text" class="form-control" id="firstName" name="first_name" placeholder="First Name" value="{{ current_user.first_name }}">
                     </div>
-                    <div class="mb-3">
-                        <label for="preferredName" class="form-label">Preferred Name</label>
-                        <input type="text" class="form-control" id="preferredName" placeholder="Preferred Name">
-                    </div>
+                    
                     <div class="mb-3">
                         <label for="surname" class="form-label">Surname</label>
-                        <input type="text" class="form-control" id="surname" placeholder="Surname">
+                        <input type="text" class="form-control" id="surname" name="last_name" placeholder="Surname" value="{{ current_user.last_name }}">
                     </div>
                     <div class="mb-3">
+                        <br>
                         <h5>Reset Password</h5>
                         <div class="mb-3">
                             <label for="currentPassword" class="form-label">Current Password</label>
-                            <input type="password" class="form-control" id="currentPassword" placeholder="Current Password">
+                            <input type="password" class="form-control" id="currentPassword" name="current_password" placeholder="Current Password">
+                            <div id="currentPasswordFeedback" class="invalid-feedback"></div>
                         </div>
                         <div class="mb-3">
                             <label for="newPassword" class="form-label">New Password</label>
-                            <input type="password" class="form-control" id="newPassword" placeholder="New Password">
+                            <input type="password" class="form-control" id="newPassword" name="new_password" placeholder="New Password">
+                            <div id="newPasswordFeedback" class="invalid-feedback"></div>
                         </div>
                         <div class="mb-3">
                             <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
-                            <input type="password" class="form-control" id="confirmNewPassword" placeholder="Confirm New Password">
+                            <input type="password" class="form-control" id="confirmNewPassword" name="confirm_new_password" placeholder="Confirm New Password">
+                            <div id="confirmNewPasswordFeedback" class="invalid-feedback"></div>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Save</button>
+                    <div id="updateFeedback" class="mt-3"></div>
                 </form>
             </div>
         </div>
     </div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Check current password via AJAX
+            $("#currentPassword").on("blur", function() {
+            let currentPassword = $(this).val();
+
+            $.ajax({
+                url: '{% url "accountSettings" %}',
+                method: 'POST',
+                data: {
+                    'current_password': currentPassword,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if(!response.is_correct) {
+                        $("#currentPasswordFeedback").text("Incorrect current password").show();
+                        $("#currentPassword").addClass('is-invalid');
+                    } else {
+                        $("#currentPasswordFeedback").hide();
+                        $("#currentPassword").removeClass('is-invalid');
+                    }
+                }
+            });
+        });
+
+            // Check if new password is the same as current password
+            $("#newPassword").on("blur", function() {
+                let currentPassword = $("#currentPassword").val();
+                let newPassword = $(this).val();
+                
+                if(newPassword == currentPassword) {
+                    $("#newPasswordFeedback").text("New password should be different from the current password").show();
+                    $("#newPassword").addClass('is-invalid');
+                } else {
+                    $("#newPasswordFeedback").hide();
+                    $("#newPassword").removeClass('is-invalid');
+                }
+            });
+
+            // Check if confirm password matches the new password
+            $("#confirmNewPassword").on("blur", function() {
+                let newPassword = $("#newPassword").val();
+                let confirmNewPassword = $(this).val();
+                
+                if(newPassword != confirmNewPassword) {
+                    $("#confirmNewPasswordFeedback").text("Passwords do not match").show();
+                    $("#confirmNewPassword").addClass('is-invalid');
+                } else {
+                    $("#confirmNewPasswordFeedback").hide();
+                    $("#confirmNewPassword").removeClass('is-invalid');
+                }
+            });
+
+            // On form submit
+            $("#accountSettingsForm").on("submit", function(e) {
+                e.preventDefault();
+
+                let currentPassword = $("#currentPassword").val();
+                let newPassword = $("#newPassword").val();
+                let confirmNewPassword = $("#confirmNewPassword").val();
+
+                if (!currentPassword || !newPassword || !confirmNewPassword) {
+                    $("#updateFeedback").text("Passwords cannot be empty").css("color", "red");
+                    return;
+                }
+
+                if(newPassword === confirmNewPassword) {
+                    $.ajax({
+                        url: '{% url "accountSettings" %}',
+                        method: 'POST',
+                        data: $(this).serialize(),
+                        dataType: 'json',
+                        success: function(response) {
+                            if(response.success) {
+                                $("#updateFeedback").text("Profile successfully updated").css("color", "green");
+                            }
+                        },
+                        error: function(response) {
+                            alert(response.responseJSON.message);
+                        }
+                    });
+                } else {
+                    $("#updateFeedback").text("Passwords do not match").css("color", "red");
+                }
+            });
+        });
+    </script>
+
 {% endblock %}

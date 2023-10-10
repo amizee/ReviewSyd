@@ -163,7 +163,7 @@ def updReview(request, loc):
     #logger.info("Location: %s", loc)
     Review=location.location_reviews.get(pk=primKey)#I think the problem is with how primJey is parsed, it is noo
     #logger.info("Primary Key: %s", primKey)
-    Review.likes+=val
+    Review.likes+=int(val)
     Review.save(update_fields=['likes'])
     ret=[{'likes': Review.likes, 'pk':primKey}]
     return JsonResponse(ret,safe=False)

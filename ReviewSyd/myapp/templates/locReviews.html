@@ -129,13 +129,13 @@
         })
         var btnsU=$('*#unliked')
         Array.prototype.slice.call(btnsU).forEach((obj)=>{
-            $(obj).click((e)=>{
+            $(obj).on('click', (e)=>{
                 liked($(obj))
             })
         })
         var btnsL=$('*#liked')
         Array.prototype.slice.call(btnsL).forEach((obj)=>{
-            $(obj).click((e)=>{
+            $(obj).on('click', (e)=>{
                 unliked($(obj))
             })
         })
@@ -143,6 +143,7 @@
     unliked=(lb)=>{
         var pk=$(lb).find('p').find('span').attr('id');
         //var pk=$(lb).find(‘p’).find(‘span’).attr
+        console.log(lb.find('p'))
         lb.empty()
         lb.removeAttr('id')
         lb.attr('id', 'unliked')
@@ -157,13 +158,15 @@
             },
             error: (error)=>{console.log(error)},
         })
-        lb.click((e)=>{
+        lb.off('click')
+        lb.on('click', (e)=>{
             liked($(lb))
         })
     }
     liked=(lb)=>{
         //var pk=$(lb).find('p').attr('id')
         var pk=$(lb).find('p').find('span').attr('id');
+        console.log(lb.find('p'))
         lb.empty()
         lb.removeAttr('id')
         lb.attr('id', 'liked')
@@ -175,12 +178,12 @@
             type: 'GET',
             data: {'val':1, 'pk':pk},
             success:(data)=>{
-                console.log(data)
                 lb.append('<p class="mr-3 mx-auto">Likes: <span id="' + data[0].pk + '">' + data[0].likes + '</span></p>')
             },
             error: (error)=>{console.log(error)},
         })
-        lb.click((e)=>{
+        lb.off('click')
+        lb.on('click', (e)=>{
             unliked($(lb))
         })
     }

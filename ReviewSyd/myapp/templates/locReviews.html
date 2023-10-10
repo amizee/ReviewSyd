@@ -151,9 +151,9 @@
         $.ajax({
             url: 'like/',
             type: 'GET',
-            data: {'val':-1},
+            data: {'val':-1, 'pk':pk},
             success:(data)=>{
-                lb.append('<p class="mr-3 mx-auto">Likes: <span id="likes-count-' + data[1] + '">' + data[0] + '</span></p>')
+                lb.append('<p class="mr-3 mx-auto">Likes: <span id="' + data[0].pk + '">' + data[0].likes + '</span></p>')
             },
             error: (error)=>{console.log(error)},
         })
@@ -175,7 +175,8 @@
             type: 'GET',
             data: {'val':1, 'pk':pk},
             success:(data)=>{
-                lb.append('<p class="mr-3 mx-auto">Likes: <span id="likes-count-' + data[1] + '">' + data[0] + '</span></p>')
+                console.log(data)
+                lb.append('<p class="mr-3 mx-auto">Likes: <span id="' + data[0].pk + '">' + data[0].likes + '</span></p>')
             },
             error: (error)=>{console.log(error)},
         })

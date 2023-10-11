@@ -5,16 +5,18 @@
             width: 80vh;
             height: 80vh;
             background-color: grey;
+            margin-top: 30px;
         }
     </style>
 
     <div class="container mt-3">
         <div class="row">
-            <div class="col-12 d-flex justify-content-start">
-                <a href="{% url 'location list' %}" class="btn btn-outline-primary">View Location List</a>
-            </div>
             <div class="col-12 d-flex justify-content-center align-items-center">
-                <div id="map"></div>
+                <!-- add a new frame to include button and map, and up shift button a bit-->
+                <div style="position: relative; width: 80vh; height: 80vh;">
+                    <a href="{% url 'location list' %}" class="btn btn-outline-primary position-absolute" style="top: -5px; left: 0; background-color: white; z-index: 1;">View Location List</a>
+                    <div id="map"></div>
+                </div>
             </div>
         </div>
     </div>

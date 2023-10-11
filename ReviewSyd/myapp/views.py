@@ -1,3 +1,4 @@
+from venv import logger
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, HttpResponse, redirect
 from .models import *
@@ -153,9 +154,16 @@ def subReview(request, loc):
 def updReview(request, loc):
     val=request.GET.get('val')
     primKey=request.GET.get('pk')
+    # Check if 'pk' is present in the URL parameters
+    if primKey is None:
+        return JsonResponse({'error': '"pk" parameter is missing'}, status=400)
+
+    #int(primKey)
     location=Locations.objects.get(name=loc)
-    Review=location.locationReview.get(pk=primKey)
-    Review.likes+=val
+    #logger.info("Location: %s", loc)
+    Review=location.location_reviews.get(pk=primKey)#I think the problem is with how primJey is parsed, it is noo
+    #logger.info("Primary Key: %s", primKey)
+    Review.likes+=int(val)
     Review.save(update_fields=['likes'])
     ret=[{'likes': Review.likes, 'pk':primKey}]
     return JsonResponse(ret,safe=False)

@@ -18,7 +18,6 @@
       }
       .question-box,
       .answer-box {
-        border: 1px solid #ccc;
         margin-left: 20px;
         margin-right: 20px;
         padding: 10px;
@@ -106,18 +105,24 @@
         // Add keyup event handler for the search input
         $("#faq-search").keyup(function () {
           var searchText = $(this).val().toLowerCase();
-
+          
+          $(".question-box").css("border-top", "");
           // Iterate through each question and check if it matches the search text
           $(".question-box").each(function () {
             var questionText = $(this).text().toLowerCase();
             var answerBox = $(this).next(".answer-box");
-
+            
             if (questionText.includes(searchText)) {
               $(this).show();
               answerBox.show();
             } else {
               $(this).hide();
               answerBox.hide();
+
+              if ($(this).is(":first-child")) {
+                // Apply the top border style to the next visible question box
+                $(this).nextAll(".question-box:visible:first").css("border-top", "1px solid #dee2e6");
+              }
             }
           });
         });

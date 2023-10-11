@@ -2,43 +2,62 @@
 {%block content%}
     <style>
         #map {
-            width: 60vh;
-            height: 60vh;
+            width: 80vh;
+            height: 80vh;
             background-color: grey;
         }
     </style>
-    <div class="container">
-        <p>
-            <button style="cursor:pointer;" onclick="location.href = '/locationList/'">
-                Location List
-            </button>
-        </p>
 
-        <div id="map"></div>
+    <div class="container mt-3">
+        <div class="row">
+            <div class="col-12 d-flex justify-content-start">
+                <a href="{% url 'location list' %}" class="btn btn-outline-primary">View Location List</a>
+            </div>
+            <div class="col-12 d-flex justify-content-center align-items-center">
+                <div id="map"></div>
+            </div>
+        </div>
     </div>
     <script>
         function initMap() {
             let usyd = {lat: -33.889822895943595, lng: 151.19212139725983};
             let map = new google.maps.Map(
-                document.getElementById('map'), {zoom: 18, center: usyd}
+                document.getElementById('map'), {zoom: 17, center: usyd, mapId: "fb18a56d52995976"}
             );
-            let pnr = new google.maps.Marker({position: {lat: -33.89020127405104, lng: 151.19306296611663}, map: map});
 
-            const infoWindowOptions = {
-                maxWidth: 200
-            };
-            const infoWindow = new google.maps.InfoWindow(infoWindowOptions);
-            infoWindow.setContent(`
-                <h6>PNR Learning Hub</h6>
-                <a href="{% url 'location' 'PNR Learning Hub' %}">Go to location</a>
-            `);
-            const infoWindowOpen = {map: map, anchor: pnr, shouldFocus:true};
+            addMarker({lat:-33.89020127405104, lng: 151.19306296611663}, 'PNR Learning Hub');
+            addMarker({lat:-33.88633127082905, lng:151.1904071550552}, 'Fisher Library');
+            addMarker({lat: -33.892248400281936, lng: 151.19099221979099}, 'Abercrombie Learning Hub');
+            addMarker({lat: -33.888250391622506, lng: 151.19070892740163}, 'Carslaw Learning Hub');
 
-            pnr.addListener("click", function (){
+            function addMarker(coords, name){
+                var marker = new google.maps.Marker({
+                    position: coords,
+                    map: map, 
+                    icon: {
+                        path: "M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z",
+                        fillColor: "blue", 
+                        fillOpacity: 0.7, 
+                        scale: 1.4, 
+                    }
+                });
+                const infoWindowOptions = {
+                    maxWidth: 200
+                };
+                const url = `/location/${name}/`;
+                const infoWindow = new google.maps.InfoWindow(infoWindowOptions);
+                const infoWindowOpen = {map: map, anchor: marker};
+                infoWindow.setContent(`
+                    <h6>${name}</h6>
+                    <a href="${url}">More information</a>
+                `);
                 infoWindow.open(infoWindowOpen);
-            });
+                marker.addListener("click", function (){
+                    infoWindow.open(infoWindowOpen);
+                });
+            }
         }
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCx7tsiBYdfdoECxfmXorJjV43n9EgoGY0&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCx7tsiBYdfdoECxfmXorJjV43n9EgoGY0&callback=initMap&map_ids=fb18a56d52995976"></script>
 
 {%endblock%}

@@ -7,22 +7,36 @@
             background-color: grey;
         }
     </style>
-    <p>
-        <button style="cursor:pointer;" onclick="location.href = '/locationList/'">
-            Location List
-        </button>
-    </p>
+    <div class="container">
+        <p>
+            <button style="cursor:pointer;" onclick="location.href = '/locationList/'">
+                Location List
+            </button>
+        </p>
 
-    <div id="map"></div>
+        <div id="map"></div>
+    </div>
     <script>
         function initMap() {
             let usyd = {lat: -33.889822895943595, lng: 151.19212139725983};
-            let unibros = {lat: -33.88955133384251, lng: 151.19108078405674};
             let map = new google.maps.Map(
                 document.getElementById('map'), {zoom: 18, center: usyd}
             );
-            let marker = new google.maps.Marker({position: usyd, map: map});
-            let marker2 = new google.maps.Marker({position: unibros, map: map});
+            let pnr = new google.maps.Marker({position: {lat: -33.89020127405104, lng: 151.19306296611663}, map: map});
+
+            const infoWindowOptions = {
+                maxWidth: 200
+            };
+            const infoWindow = new google.maps.InfoWindow(infoWindowOptions);
+            infoWindow.setContent(`
+                <h6>PNR Learning Hub</h6>
+                <a href="{% url 'location' 'PNR Learning Hub' %}">Go to location</a>
+            `);
+            const infoWindowOpen = {map: map, anchor: pnr, shouldFocus:true};
+
+            pnr.addListener("click", function (){
+                infoWindow.open(infoWindowOpen);
+            });
         }
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCx7tsiBYdfdoECxfmXorJjV43n9EgoGY0&callback=initMap"></script>

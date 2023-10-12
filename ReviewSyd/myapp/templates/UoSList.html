@@ -5,10 +5,10 @@
     <input type="search" id="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
 </div>
 <div id="UoS" class="mx-auto w-50 pt-2 text-center">
-    {%for Uo in UoS%}
+    {%for UoS in UoStudies%}
         <div>
-            <button class="w-100" onclick="location.href = '/uos/{{Uo.name}}/'">
-                {{Uo.name}}
+            <button class="w-100" onclick="location.href = '/UoS/{{UoS.name}}/'">
+                {{UoS.code}}: {{UoS.name}}
             </button>
         </div>
     {%endfor%}
@@ -20,7 +20,7 @@
         $('#search').change((e)=>{
             var search= $('#search').val()
             $.ajax({
-                url: '/UoS/search/',
+                url: '/UoSList/search/',
                 type: 'GET',
                 data: {'search':search },
                 success: (data)=>{
@@ -30,8 +30,8 @@
                         res.append('<p>No results found</p>')
                     }
                     else{
-                        Array.prototype.slice.call(data).forEach((Uo)=>{
-                            res.append("<div><button class=\"w-100\" onclick=\"Uo.href = '\/uos\/" + Uo.name + "\/'\">" + Uo.name + "</button></div>")
+                        Array.prototype.slice.call(data).forEach((UoS)=>{
+                            res.append("<div><button class=\"w-100\" onclick=\"UoS.href = '\/UoS\/" + UoS.name + "\/'\">" + UoS.code + ": " + UoS.name + "</button></div>")
                         })
                     }
                 },

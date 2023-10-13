@@ -19,6 +19,7 @@ class Locations(models.Model):
     avgClean=models.IntegerField(blank=True, default=0)
     nearPlaces=models.CharField(max_length=255, blank=True)
     image = models.ImageField(upload_to='location_images/', blank=True)
+    nearby = models.ManyToManyField('self', blank=True)
 
 
 class LocationReviews(models.Model):

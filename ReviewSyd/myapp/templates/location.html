@@ -116,11 +116,20 @@
         <br>
         <div class="row">
             <div class="col-6 h4">
-                nearby POI
+                Nearby POI
+                <br><br>
+                {% for nearby_location in location.nearby.all %}
+                    <div>
+                        <button class="btn btn-link btn-block mb-2" onclick="location.href='/location/{{ nearby_location.name }}/'">
+                            <u>{{ nearby_location.name }}</u>
+                        </button>
+                    </div>
+                {% endfor %}
             </div>
-            <div class="col-6 h4">
+            
+            <!--<div class="col-6 h4">
                 nearby spaces
-            </div>
+            </div>!-->
         </div>
     </div>
 {%endblock%}

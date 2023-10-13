@@ -16,6 +16,7 @@ from django.utils.crypto import get_random_string
 from django.utils import timezone
 from .models import PasswordResetToken
 from .forms import EmailForm, PasswordResetForm
+from django.db.models import Q
 from django.db.models import Avg
 
 
@@ -138,37 +139,41 @@ def location(request, loc):
 @login_required
 def locReviews(request, loc):
     location=Locations.objects.get(name=loc)
-    return render(request, "locReviews.html", {"location":location})
+    curr=request.user
+    pRev=location.location_reviews.filter(user=curr)
+    oRev=location.location_reviews.filter(~Q(user=curr))
+    return render(request, "locReviews.html", {"location":location, "pRev":pRev, "oRev":oRev})
 
 @login_required
 def subReview(request, loc):
-    clean = request.GET.get('clean')
-    amen = request.GET.get('amen')
-    noise = request.GET.get('noise')
-    rev = request.GET.get('rev')
-    
-    loc_obj = Locations.objects.get(name=loc)
-    
-    review = LocationReviews(
-        reviewerSID=0,
-        writtenReview=rev,
-        cleanlinessRating=clean,
-        amenitiesRating=amen,
-        noisinessRating=noise,
-        location=loc_obj
-    )
-    
+    clean= request.GET.get('clean')
+    amen= request.GET.get('amen')
+    noise= request.GET.get('noise')
+    rev= request.GET.get('rev')
+    locID=Locations.objects.get(name=loc)
+    curr=request.user
+    totRev=locID.location_reviews.all().count()
+    if totRev==0:
+        avgA=amen
+        avgC=clean
+        avgN=noise
+    else:
+        A=locID.avgAmen
+        avgA=(A*totRev+int(amen))/(totRev+1)
+        C=locID.avgClean
+        avgC=(C*totRev+int(clean))/(totRev+1)
+        N=locID.avgNoise
+        avgN=(N*totRev+int(noise))/(totRev+1)
+
+    locID.avgAmen=avgA
+    locID.avgClean=avgC
+    locID.avgNoise=avgN
+    locID.save(update_fields=['avgNoise', 'avgClean', 'avgAmen'])
+    review=LocationReviews(writtenReview = rev, cleanlinessRating = clean, amenitiesRating = amen, noisinessRating = noise, location = locID, user=curr)
     review.save()
-
-    loc_obj.avgNoise = LocationReviews.objects.filter(location=loc_obj).aggregate(Avg('noisinessRating'))['noisinessRating__avg']
-    loc_obj.avgAmen = LocationReviews.objects.filter(location=loc_obj).aggregate(Avg('amenitiesRating'))['amenitiesRating__avg']
-    loc_obj.avgClean = LocationReviews.objects.filter(location=loc_obj).aggregate(Avg('cleanlinessRating'))['cleanlinessRating__avg']
-
-    loc_obj.save()
-
-    location = Locations.objects.filter(name=loc)
-
-    return render(request, "locReviews.html", {"location": location})
+    pRev=locID.location_reviews.filter(user=curr)
+    oRev=locID.location_reviews.filter(~Q(user=curr))
+    return render(request, "locReviews.html", {"location":locID, "pRev":pRev, "oRev":oRev})
 
 def updReview(request, loc):
     val=request.GET.get('val')
@@ -187,6 +192,55 @@ def updReview(request, loc):
     ret=[{'likes': Review.likes, 'pk':primKey}]
     return JsonResponse(ret,safe=False)
 
+def delReview(request, loc):
+    primKey=request.GET.get('pk')
+    if primKey is None:
+        return JsonResponse({'error': '"pk" parameter is missing'}, status=400)
+
+    location=Locations.objects.get(name=loc)
+    Review=location.location_reviews.get(pk=primKey)
+    totRev=location.location_reviews.all().count()
+    clean=Review.cleanlinessRating
+    amen=Review.amenitiesRating
+    noise=Review.noisinessRating
+    if totRev==1:
+        avgA=0
+        avgC=0
+        avgN=0
+    else:
+        A=location.avgAmen
+        avgA=(A*totRev-amen)/(totRev-1)
+        C=location.avgClean
+        avgC=(C*totRev-clean)/(totRev-1)
+        N=location.avgNoise
+        avgN=(N*totRev-noise)/(totRev-1)
+
+    location.avgAmen=avgA
+    location.avgClean=avgC
+    location.avgNoise=avgN
+    location.save(update_fields=['avgNoise', 'avgClean', 'avgAmen'])
+    Review.delete()
+    curr=request.user
+    pRev=location.location_reviews.filter(user=curr)
+    oRev=location.location_reviews.filter(~Q(user=curr))
+    return render(request, "locReviews.html", {"location":location, "pRev":pRev, "oRev":oRev})
+
+def repReview(request, loc):
+    val=request.GET.get('val')
+    primKey=request.GET.get('pk')
+    # Check if 'pk' is present in the URL parameters
+    if primKey is None:
+        return JsonResponse({'error': '"pk" parameter is missing'}, status=400)
+
+    #int(primKey)
+    location=Locations.objects.get(name=loc)
+    #logger.info("Location: %s", loc)
+    Review=location.location_reviews.get(pk=primKey)#I think the problem is with how primJey is parsed, it is noo
+    #logger.info("Primary Key: %s", primKey)
+    Review.reports+=int(val)
+    Review.save(update_fields=['reports'])
+    ret=[{'pk':primKey}]
+    return JsonResponse(ret,safe=False)
 
 @login_required
 def accountSettings(request):
@@ -287,29 +341,63 @@ def signupCompletion(request):
 @login_required
 def UoSList(request):
     results=UoS.objects.all()
-    return render(request, "UoSList.html", {"UoS": results, "navbar": "uos"})
+    return render(request, "UoSList.html", {"UoStudies": results})
 
 @login_required
 def UoSSearch(request):
     search=request.GET.get('search','')
-    results=UoS.objects.filter(name__icontains=search)
-    res=[{'name':result.name} for result in results]
+    results=UoS.objects.filter(Q(name__icontains=search) | Q(code__icontains=search))
+    res=[{'name':result.name, 'code':result.code} for result in results]
     return JsonResponse(res, safe=False)
 
 @login_required
-def UoStudy(request, UoS):
-    UoS=UoS.objects.get(name=UoS)
-    return render(request, "UoS.html", {"UoS":UoS})
+def UoStudy(request, Uos):
+    UoStudy=UoS.objects.get(name=Uos)
+    curr=request.user
+    pCom=UoStudy.uos_comment.filter(user=curr)
+    oCom=UoStudy.uos_comment.filter(~Q(user=curr))
+    return render(request, "UoS.html", {"UoS":UoStudy, "pCom":pCom, "oCom":oCom})
 
 @login_required
-def subComment(request, UoS):
+def subUoS(request, Uos):
     com= request.GET.get('com')
-    UoS=request.GET.get('UoS')
-    UoS=Locations.object.get(name=UoS)
-    comment=UoSComment(reviewerSID = 0, comment = com, UoS = UoS)
+    curr=request.user
+    UoStudy=UoS.objects.get(name=Uos)
+    comment=UoSComment(user=curr, comment = com, uos = UoStudy)
     comment.save()
-    UoS=UoS.objects.get(name=UoS)
-    return render(request, "UoS.html", {"UoS":UoS})
+    pCom=UoStudy.uos_comment.filter(user=curr)
+    oCom=UoStudy.uos_comment.filter(~Q(user=curr))
+    return render(request, "UoS.html", {"UoS":UoStudy, "pCom":pCom, "oCom":oCom})
+
+def delUoS(request, Uos):
+    primKey=request.GET.get('pk')
+    if primKey is None:
+        return JsonResponse({'error': '"pk" parameter is missing'}, status=400)
+    
+    uos=UoS.objects.get(name=Uos)
+    com=uos.uos_comment.get(pk=primKey)
+    com.delete()
+    curr=request.user
+    pCom=uos.uos_comment.filter(user=curr)
+    oCom=uos.uos_comment.filter(~Q(user=curr))
+    return render(request, "UoS.html", {"UoS":uos, "pCom":pCom, "oCom":oCom})
+
+def repUoS(request, Uos):
+    val=request.GET.get('val')
+    primKey=request.GET.get('pk')
+    # Check if 'pk' is present in the URL parameters
+    if primKey is None:
+        return JsonResponse({'error': '"pk" parameter is missing'}, status=400)
+
+    #int(primKey)
+    Unit=UoS.objects.get(name=Uos)
+    #logger.info("Location: %s", loc)
+    Comment=Unit.location_reviews.get(pk=primKey)#I think the problem is with how primJey is parsed, it is noo
+    #logger.info("Primary Key: %s", primKey)
+    Comment.reports+=int(val)
+    Comment.save(update_fields=['reports'])
+    ret=[{'pk':primKey}]
+    return JsonResponse(ret,safe=False)
 
 def request_password_reset(request):
     message = ""

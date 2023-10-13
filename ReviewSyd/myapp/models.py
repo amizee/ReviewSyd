@@ -18,8 +18,12 @@ class Locations(models.Model):
     nearby = models.ManyToManyField('self', blank=True)
     image = models.ImageField(upload_to='location_images/', blank=True)
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    student_id = models.IntegerField(blank=False, default=0)
+    is_tutor = models.BooleanField(default=False)
+
 class LocationReviews(models.Model):
-    reviewerSID = models.IntegerField()
     writtenReview = models.CharField(max_length=255)
     likes = models.IntegerField(default=0)
     cleanlinessRating = models.IntegerField(validators=[MaxValueValidator(5)],default=0)
@@ -27,15 +31,17 @@ class LocationReviews(models.Model):
     noisinessRating = models.IntegerField(validators=[MaxValueValidator(5)],default=0)
     reports = models.IntegerField(default=0)
     location = models.ForeignKey(Locations, on_delete=models.CASCADE, related_name='location_reviews')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
 class UoS(models.Model):
     code = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
 
 class UoSComment(models.Model):
-    commenterSID = models.IntegerField(default=0)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     comment = models.CharField(max_length=255)
-    uos = models.ForeignKey(UoS, on_delete=models.CASCADE, related_name='comments', default=0)
+    uos = models.ForeignKey(UoS, on_delete=models.CASCADE, related_name='uos_comment', null=True, blank=True)
+    reports = models.IntegerField(default=0)
 
 
 class Faq(models.Model):
@@ -53,13 +59,6 @@ class Tutor(models.Model):
     email = models.EmailField()
     description = models.TextField(blank=True) 
     image = models.ImageField(upload_to='tutor_images/', blank=True) 
-
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    student_id = models.IntegerField(blank=False, default=0)
-    is_tutor = models.BooleanField(default=False)
-
 
 class PasswordResetToken(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

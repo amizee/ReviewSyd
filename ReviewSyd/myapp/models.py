@@ -15,6 +15,7 @@ class Locations(models.Model):
     avgAmen=models.IntegerField(blank=True, default=0)
     avgClean=models.IntegerField(blank=True, default=0)
     nearPlaces=models.CharField(max_length=255, blank=True)
+    nearby = models.ManyToManyField('self', blank=True)
 
 class LocationReviews(models.Model):
     reviewerSID = models.IntegerField()

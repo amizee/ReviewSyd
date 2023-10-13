@@ -30,7 +30,7 @@ class LocationReviews(models.Model):
     amenitiesRating = models.IntegerField(validators=[MaxValueValidator(5)],default=0)
     noisinessRating = models.IntegerField(validators=[MaxValueValidator(5)],default=0)
     reports = models.IntegerField(default=0)
-    location = models.ForeignKey(Locations, on_delete=models.CASCADE, related_name='reviews')
+    location = models.ForeignKey(Locations, on_delete=models.CASCADE, related_name='location_reviews')
 
 class UoS(models.Model):
     code = models.CharField(max_length=255)

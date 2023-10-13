@@ -198,35 +198,45 @@
             })
         })
         var btnsU=$('*#unliked')
-        Array.prototype.slice.call(btnsU).forEach((obj)=>{
-            $(obj).on('click', (e)=>{
-                liked($(obj))
+        if(btnsU.length!=0){
+            Array.prototype.slice.call(btnsU).forEach((obj)=>{
+                $(obj).on('click', (e)=>{
+                    liked($(obj))
+                })
             })
-        })
+        }
         var btnsL=$('*#liked')
-        Array.prototype.slice.call(btnsL).forEach((obj)=>{
-            $(obj).on('click', (e)=>{
-                unliked($(obj))
+        if(btnsL.length!=0){
+            Array.prototype.slice.call(btnsL).forEach((obj)=>{
+                $(obj).on('click', (e)=>{
+                    unliked($(obj))
+                })
             })
-        })
+        }
         var btnsRed=$('*#reported')
-        Array.prototype.slice.call(btnsRep).forEach((obj)=>{
-            $(obj).on('click', (e)=>{
-                unreport($(obj))
+        if(btnsRed.length!=0){
+            Array.prototype.slice.call(btnsRep).forEach((obj)=>{
+                $(obj).on('click', (e)=>{
+                    unreport($(obj))
+                })
             })
-        })
+        }
         var btnsRep=$('*#unreported')
-        Array.prototype.slice.call(btnsRed).forEach((obj)=>{
-            $(obj).on('click', (e)=>{
-                report($(obj))
+        if(btnsRep.length!=0){
+            Array.prototype.slice.call(btnsRed).forEach((obj)=>{
+                $(obj).on('click', (e)=>{
+                    report($(obj))
+                })
             })
-        })
+        }
         var btnsD=$('*#del')
-        Array.prototype.slice.call(btnsD).forEach((obj)=>{
-            $(obj).on('click', (e)=>{
-                del($(obj))
+        if(btnsD.length!=0){
+            Array.prototype.slice.call(btnsD).forEach((obj)=>{
+                $(obj).on('click', (e)=>{
+                    del($(obj))
+                })
             })
-        })
+        }
     })
     unliked=(lb)=>{
         var pk=$(lb).find('p').find('span').attr('id');

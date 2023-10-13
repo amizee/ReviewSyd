@@ -1,100 +1,133 @@
-{% extends "hf.html" %}
-{% block title %}FAQ{% endblock %}
-{% block content %}
+{% extends "hf.html" %} {% block title %}FAQ{% endblock %} {% block content %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <head>
+    <meta charset="UTF-8" />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <style>
-        .bold-text {
-            font-weight: bold;
-        }
-        .question-box, .answer-box {
-            border: 1px solid #ccc;
-            margin-left: 20px;
-            margin-right: 20px;
-            padding: 10px;
-        }
-        .answer-box {
-            display: none;
-        }
-        .search-container {
-            margin-bottom: 20px;
-        }
-        .search-input {
-            width: 50%;
-            padding: 10px;
-        }
+      .bold-text {
+        font-weight: bold;
+      }
+      .question-box,
+      .answer-box {
+        margin-left: 20px;
+        margin-right: 20px;
+        padding: 10px;
+      }
+      .answer-box {
+        display: none;
+      }
+      .search-container {
+        margin-bottom: 20px;
+      }
+      .search-input {
+        width: 50%;
+        padding: 10px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="text-center">
-        <h1>
-            <br>
-            <br>
-            FAQ
-        </h1>
-        <h5>Commonly Asked Questions</h5>
-        <br>
-        <h7>Can't find your question? Please see the feedback Tab to send us any questions you may have!</h7>
-        <br>
-        <hr  size="5" color="black">
+      <h1>
+        <br />
+        <br />
+        FAQ
+      </h1>
+      <h5>Commonly Asked Questions</h5>
+      <br />
+      <h7
+        >Can't find your question? Please see the feedback tab to send us any
+        questions you may have!</h7
+      >
+      <br />
+      <hr size="5" color="black" />
     </div>
 
     <div class="text-center search-container">
-        <input type="text" class="search-input text-center" id="faq-search" placeholder="Search for a question">
+      <input
+        type="text"
+        class="search-input text-center"
+        id="faq-search"
+        placeholder="Search for a question"
+      />
     </div>
 
-    <div class="text-center">
+    <div class="container" style="margin-bottom: 100px">
+      <div class="accordion" id="accordionFaq">
         {% for item in faq %}
-        <div class="question-box">
-            <a href="#" class="toggle-answer" data-toggle-id="answer{{ forloop.counter }}">
-                <span class="bold-text">{{ item.question }}</span>
-            </a>
-        </div>
-        <div class="answer-box" id="answer{{ forloop.counter }}">
-            {{ item.answer }}
+        <div class="accordion-item question-box">
+          <h2 class="accordion-header">
+            <button
+              class="accordion-button toggle-answer collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapse{{ forloop.counter }}"
+              aria-expanded="false"
+              aria-controls="collapse"
+              data-toggle-id="answer{{ forloop.counter }}"
+            >
+              <h6>{{item.question}}</h6>
+            </button>
+          </h2>
+          <div
+            id="collapse{{ forloop.counter }}"
+            class="accordion-collapse collapse"
+            data-bs-parent="#accordionFaq"
+          >
+            <div class="accordion-body">{{item.answer}}</div>
+          </div>
         </div>
         {% endfor %}
+      </div>
     </div>
-    
+
     <script>
-        $(document).ready(function() {
-            // Add click event handler for the toggle links
-            $(".toggle-answer").click(function(e) {
-                e.preventDefault(); // Prevent the default link behavior
+      $(document).ready(function () {
+        // Add click event handler for the toggle links
+        $(".toggle-answer").click(function (e) {
+          e.preventDefault(); // Prevent the default link behavior
 
-                // Get the data-toggle-id attribute value
-                var toggleId = $(this).data("toggle-id");
+          // Get the data-toggle-id attribute value
+          var toggleId = $(this).data("toggle-id");
 
-                // Toggle the visibility of the associated answer
-                $("#" + toggleId).toggle();
-            });
-
-            // Add keyup event handler for the search input
-            $("#faq-search").keyup(function() {
-                var searchText = $(this).val().toLowerCase();
-
-                // Iterate through each question and check if it matches the search text
-                $(".question-box").each(function() {
-                    var questionText = $(this).text().toLowerCase();
-                    var answerBox = $(this).next(".answer-box");
-
-                    if (questionText.includes(searchText)) {
-                        $(this).show();
-                        answerBox.show();
-                    } else {
-                        $(this).hide();
-                        answerBox.hide();
-                    }
-                });
-            });
+          // Toggle the visibility of the associated answer
+          $(toggleId).toggle();
         });
+
+        // Add keyup event handler for the search input
+        $("#faq-search").keyup(function () {
+          var searchText = $(this).val().toLowerCase();
+          
+          $(".question-box").css("border-top", "");
+          // Iterate through each question and check if it matches the search text
+          $(".question-box").each(function () {
+            var questionText = $(this).text().toLowerCase();
+            var answerBox = $(this).next(".answer-box");
+            
+            if (questionText.includes(searchText)) {
+              $(this).show();
+              answerBox.show();
+            } else {
+              $(this).hide();
+              answerBox.hide();
+
+              if ($(this).is(":first-child")) {
+                // Apply the top border style to the next visible question box
+                $(this).nextAll(".question-box:visible:first").css("border-top", "1px solid #dee2e6");
+              }
+            }
+          });
+        });
+      });
     </script>
-</body>
+  </body>
 </html>
 {% endblock %}

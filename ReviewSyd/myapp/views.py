@@ -17,6 +17,7 @@ from django.utils import timezone
 from .models import PasswordResetToken
 from .forms import EmailForm, PasswordResetForm
 from django.db.models import Q
+from django.db.models import Avg
 
 
 
@@ -117,7 +118,7 @@ def remove_tutor(request, tutor_id):
 @login_required
 def locationList(request):
     results=Locations.objects.all()
-    return render(request, "locationList.html", {"locations": results})
+    return render(request, "locationList.html", {"locations": results, "navbar": "locations"})
 
 @login_required
 def locSearch(request):

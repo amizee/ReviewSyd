@@ -3,9 +3,6 @@ from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator
 
 
-class Amenity(models.Model):
-    name = models.CharField(max_length=255)
-    image = models.ImageField(upload_to='amenities_images/', blank=True)
 # Create your models here.
 class Locations(models.Model):
     name= models.CharField(max_length=255)
@@ -13,14 +10,11 @@ class Locations(models.Model):
     hours=models.CharField(max_length=255)
     website=models.CharField(max_length=255, blank=True)
     phone_number=models.CharField(max_length=255, blank=True)
-    amenities=models.ManyToManyField(Amenity, blank=True)
+    amenities=models.CharField(max_length=255, blank=True)
     avgNoise=models.IntegerField(blank=True, default=0)
     avgAmen=models.IntegerField(blank=True, default=0)
     avgClean=models.IntegerField(blank=True, default=0)
     nearPlaces=models.CharField(max_length=255, blank=True)
-    image = models.ImageField(upload_to='location_images/', blank=True)
-    nearby = models.ManyToManyField('self', blank=True)
-
 
 class LocationReviews(models.Model):
     reviewerSID = models.IntegerField()

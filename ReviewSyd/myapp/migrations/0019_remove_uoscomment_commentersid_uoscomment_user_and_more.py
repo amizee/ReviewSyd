@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('myapp', '0018_remove_locationreviews_reviewersid'),
+        ('myapp', '0018_locations_image'),
     ]
 
     operations = [

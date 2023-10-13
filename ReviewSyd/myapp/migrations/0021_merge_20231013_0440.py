@@ -6,7 +6,6 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('myapp', '0018_likes_review_alter_likes_user_and_more'),
         ('myapp', '0018_locations_image'),
         ('myapp', '0020_uoscomment_reports'),
     ]

@@ -15,4 +15,8 @@ class Migration(migrations.Migration):
             name='image',
             field=models.ImageField(blank=True, upload_to='location_images/'),
         ),
+        migrations.RemoveField(
+            model_name='locationreviews',
+            name='reviewerSID',
+        ),
     ]

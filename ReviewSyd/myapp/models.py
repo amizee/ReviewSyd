@@ -4,6 +4,10 @@ from django.core.validators import MaxValueValidator
 
 
 # Create your models here.
+class Amenity(models.Model):
+    name = models.CharField(max_length=255)
+    image = models.ImageField(upload_to='amenities_images/', blank=True)
+
 class Locations(models.Model):
     name= models.CharField(max_length=255)
     location= models.CharField(max_length=255)
@@ -17,6 +21,7 @@ class Locations(models.Model):
     nearPlaces=models.CharField(max_length=255, blank=True)
     nearby = models.ManyToManyField('self', blank=True)
     image = models.ImageField(upload_to='location_images/', blank=True)
+    amenities=models.ManyToManyField(Amenity, blank=True)
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

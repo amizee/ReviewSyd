@@ -141,15 +141,33 @@ def locReviews(request, loc):
 
 @login_required
 def subReview(request, loc):
-    clean= request.GET.get('clean')
-    amen= request.GET.get('amen')
-    noise= request.GET.get('noise')
-    rev= request.GET.get('rev')
-    locID=Locations.objects.get(name=loc)
-    review=LocationReviews(reviewerSID = 0, writtenReview = rev, cleanlinessRating = clean, amenitiesRating = amen, noisinessRating = noise, location = locID)
+    clean = request.GET.get('clean')
+    amen = request.GET.get('amen')
+    noise = request.GET.get('noise')
+    rev = request.GET.get('rev')
+    
+    loc_obj = Locations.objects.get(name=loc)
+    
+    review = LocationReviews(
+        reviewerSID=0,
+        writtenReview=rev,
+        cleanlinessRating=clean,
+        amenitiesRating=amen,
+        noisinessRating=noise,
+        location=loc_obj
+    )
+    
     review.save()
-    location=Locations.objects.filter(name=loc)
-    return render(request, "locReviews.html", {"location":location})
+
+    loc_obj.avgNoise = LocationReviews.objects.filter(location=loc_obj).aggregate(Avg('noisinessRating'))['noisinessRating__avg']
+    loc_obj.avgAmen = LocationReviews.objects.filter(location=loc_obj).aggregate(Avg('amenitiesRating'))['amenitiesRating__avg']
+    loc_obj.avgClean = LocationReviews.objects.filter(location=loc_obj).aggregate(Avg('cleanlinessRating'))['cleanlinessRating__avg']
+
+    loc_obj.save()
+
+    location = Locations.objects.filter(name=loc)
+
+    return render(request, "locReviews.html", {"location": location})
 
 def updReview(request, loc):
     val=request.GET.get('val')

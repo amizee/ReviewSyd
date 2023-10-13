@@ -16,6 +16,7 @@ from django.utils.crypto import get_random_string
 from django.utils import timezone
 from .models import PasswordResetToken
 from .forms import EmailForm, PasswordResetForm
+from django.db.models import Avg
 
 
 

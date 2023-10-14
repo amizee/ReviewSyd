@@ -3,8 +3,7 @@
 {% block content %}
 {% load static %}
 
-    <h1 class="text-center">Find a tutor</h1>
-    <br>
+<div class="font-weight-bold h1 pb-3 text-center">Find a tutor</div>
 
     <!-- Include the Bootstrap JS library -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -13,10 +12,27 @@
 .tutor-description {
   max-width: 100%; /* Set to 100% to allow it to take up full width */
   word-wrap: break-word; /* Allows breaking words if they exceed container's width */
+  overflow: hidden; /* Hide the scrollbar */
 }
 
+.card {
+  overflow: hidden;
+}
+
+.card:hover {
+  overflow-y: auto;
+}
+
+.card:hover::-webkit-scrollbar {
+  width: 10px;
+}
+
+.card:hover::-webkit-scrollbar-thumb {
+  background-color: lightgrey;
+}
 
 </style>
+
 <div class="container">
     <div class="row my-4">
         <div class="col-md-5 mx-auto">
@@ -47,30 +63,25 @@
               </form>
           {% endif %}
           
-            <div class="border p-3" style="height: 280px; overflow-y: auto;">
-              <div class="d-flex align-items-center justify-content-between flex-wrap"> <!-- Add flex-wrap here -->
-                    <div>
-                        {% if tutor.image %}
-                        <img src="{{ tutor.image.url }}" alt="Profile Image" style="width: 70px; height: 70px; margin-right: 80px;">
-                        {% else %}
-                            <img src="{% static 'images/default_profile.png' %}" alt="Profile Image" style="width: 70px; height: 70px; margin-right: 80px;">
-                        {% endif %}
-                        
-                        <!-- Displaying tutor's name, subject, and email from the database -->
-                        <h5 class="name"><br>Name: {{ tutor.name }}</h5>
-                        <p class="subject">Subject: {{ tutor.subject }}</p>
-                        <p>Email: {{ tutor.email }}</p>
-                        <p class="tutor-description">Description:<br> 
-                          {% if tutor.description %}
-                              {{ tutor.description }}
-                          {% else %}
-                              Tutor left nothing here.
-                          {% endif %}
-                        </p>
-                    </div>
-                   
-                </div>
+          <div class="card" style="height: 300px;">
+            {% if tutor.image %}
+                <img src="{{ tutor.image.url }}" alt="Profile Image" style="width: 70px; height: 70px; margin-right: 80px; margin-left: 18px; margin-top: 18px;">
+            {% else %}
+                <img src="{% static 'images/default_profile.png' %}" alt="Profile Image" style="width: 70px; height: 70px; margin-right: 80px; margin-left: 18px; margin-top: 18px;">
+            {% endif %}
+            <div class="card-body">
+              <h5 class="name card-title">Name: {{ tutor.name }}</h5>
+              <p class="subject card-text">Subject: {{ tutor.subject }}</p>
+              <p class="card-text">Email: {{ tutor.email }}</p>
+              <p class="tutor-description card-text">Description:<br> 
+                {% if tutor.description %}
+                    {{ tutor.description }}
+                {% else %}
+                    Tutor left nothing here.
+                {% endif %}
+              </p>
             </div>
+          </div>
         </div>
         {% endfor %}
     </div>

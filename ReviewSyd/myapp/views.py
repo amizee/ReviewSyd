@@ -341,7 +341,7 @@ def signupCompletion(request):
 @login_required
 def UoSList(request):
     results=UoS.objects.all()
-    return render(request, "UoSList.html", {"UoStudies": results})
+    return render(request, "UoSList.html", {"UoStudies": results, "navbar": "uos"})
 
 @login_required
 def UoSSearch(request):

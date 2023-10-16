@@ -2,19 +2,18 @@
 {%block content%}
     <style>
         #map {
-            width: 80vh;
-            height: 80vh;
+            width: 120vh;
+            height: 75vh;
             background-color: grey;
             margin-top: 30px;
         }
     </style>
 
-    <div class="container mt-3">
+    <div class="container" style="margin-bottom: 100px;">
         <div class="row">
             <div class="col-12 d-flex justify-content-center align-items-center">
                 <!-- add a new frame to include button and map, and up shift button a bit-->
-                <div style="position: relative; width: 80vh; height: 80vh;">
-                    <a href="{% url 'location list' %}" class="btn btn-outline-primary position-absolute" style="top: -5px; left: 0; background-color: white; z-index: 1;">View Location List</a>
+                <div>
                     <div id="map"></div>
                 </div>
             </div>
@@ -24,7 +23,7 @@
         function initMap() {
             let usyd = {lat: -33.889822895943595, lng: 151.19212139725983};
             let map = new google.maps.Map(
-                document.getElementById('map'), {zoom: 17, center: usyd, mapId: "fb18a56d52995976"}
+                document.getElementById('map'), {zoom: 16, center: usyd, mapId: "fb18a56d52995976"}
             );
 
             addMarker({lat:-33.89020127405104, lng: 151.19306296611663}, 'PNR Learning Hub');

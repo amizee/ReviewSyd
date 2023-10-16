@@ -24,9 +24,10 @@ from django.db.models import Avg
 
 #python(3) manage.py runserver
 # Create your views here.
+
 @login_required
-def home(request):
-    return render(request, "home.html", {"navbar": "home"})
+def locationsMap(request):
+    return render(request, "locationsMap.html", {"navbar": "locationsMap"})
 
 
 def ts(request):
@@ -118,7 +119,7 @@ def remove_tutor(request, tutor_id):
 @login_required
 def locationList(request):
     results=Locations.objects.all()
-    return render(request, "locationList.html", {"locations": results, "navbar": "locations"})
+    return render(request, "locationList.html", {"locations": results, "navbar": "home"})
 
 @login_required
 def locSearch(request):

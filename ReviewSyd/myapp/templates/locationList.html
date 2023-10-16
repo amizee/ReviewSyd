@@ -10,19 +10,27 @@
 </style>
 
 <div class="font-weight-bold h1 pb-3 text-center">Location List</div>
-<div class="input-group rounded w-25 mx-auto py-3">
-    <input type="search" id="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+<div class="container">
+    <div class="row">
+        <div class="input-group rounded mx-auto py-3" style="width: 40%;">
+            <input type="search" id="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+        </div>
+        <div class="col-1">
+            <a href="{% url 'locationsMap' %}" class="btn btn-outline-primary" style="margin-left: -225px; margin-top: 15px;">View locations as map</a>
+        </div>
+    </div>
 </div>
-<div style="margin-bottom:100px;">
-    <div id="locations" class="row mx-auto w-50 pt-2 text-center d-flex justify-content-center align-items-center">
+
+<div class="container" style="margin-bottom: 100px;">
+    <div id="locations" class="pt-2 text-center d-flex justify-content-center flex-wrap">
         {%for location in locations%}
-            <div class="card col-5 m-1">
+            <div class="card col-3 m-2">
                 <a
                     href="{% url 'location' location.name %}"
                     style="text-decoration: none; color: inherit"
                 >
                     {% if location.image%}
-                        <img src="{{ location.image.url }}" class="card-img-top img-fluid" alt="Location Image">
+                        <img src="{{ location.image.url }}" class="card-img-top" alt="Location Image">
                     {%else%}
                         <img src="{% static 'images/default_location.png' %}" alt="Location Image">
                     {%endif%}
@@ -40,6 +48,7 @@
         {%endfor%}  
     </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>

@@ -187,9 +187,13 @@ def updReview(request, loc):
     #logger.info("Location: %s", loc)
     Review=location.location_reviews.get(pk=primKey)#I think the problem is with how primJey is parsed, it is noo
     #logger.info("Primary Key: %s", primKey)
-    Review.likes+=int(val)
-    Review.save(update_fields=['likes'])
-    ret=[{'likes': Review.likes, 'pk':primKey}]
+    if int(val)==1:
+        l=likes(user=request.user, rev=Review)
+        Review.like.add(l.user)
+    else:
+        Review.like.remove(request.user)
+    count= Review.like.count()
+    ret=[{'likes': count, 'pk':primKey}]
     return JsonResponse(ret,safe=False)
 
 def delReview(request, loc):
@@ -237,8 +241,13 @@ def repReview(request, loc):
     #logger.info("Location: %s", loc)
     Review=location.location_reviews.get(pk=primKey)#I think the problem is with how primJey is parsed, it is noo
     #logger.info("Primary Key: %s", primKey)
-    Review.reports+=int(val)
-    Review.save(update_fields=['reports'])
+    if int(val)==1:
+        r=reports(user=request.user, rep=Review)
+        Review.report.add(r.user)
+    else:
+        Review.report.remove(request.user)
+
+    count= Review.report.count()
     ret=[{'pk':primKey}]
     return JsonResponse(ret,safe=False)
 

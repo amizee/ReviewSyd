@@ -28,15 +28,25 @@ class UserProfile(models.Model):
     student_id = models.IntegerField(blank=False, default=0)
     is_tutor = models.BooleanField(default=False)
 
+
+
 class LocationReviews(models.Model):
     writtenReview = models.CharField(max_length=255)
-    likes = models.IntegerField(default=0)
+    like=models.ManyToManyField(User, through='likes', related_name='rev_likes')
     cleanlinessRating = models.IntegerField(validators=[MaxValueValidator(5)],default=0)
     amenitiesRating = models.IntegerField(validators=[MaxValueValidator(5)],default=0)
     noisinessRating = models.IntegerField(validators=[MaxValueValidator(5)],default=0)
-    reports = models.IntegerField(default=0)
+    report=models.ManyToManyField(User, through='reports', related_name='rev_reports')
     location = models.ForeignKey(Locations, on_delete=models.CASCADE, related_name='location_reviews')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
+class likes(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='user_like')
+    rev = models.ForeignKey(LocationReviews, on_delete=models.CASCADE, null=True, blank=True, related_name='rev_like')
+
+class reports(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='user_rep')
+    rep = models.ForeignKey(LocationReviews, on_delete=models.CASCADE, null=True, blank=True, related_name='rev_rep')    
 
 class UoS(models.Model):
     code = models.CharField(max_length=255)

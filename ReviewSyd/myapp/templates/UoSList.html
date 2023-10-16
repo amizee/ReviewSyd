@@ -31,7 +31,7 @@
                     }
                     else{
                         Array.prototype.slice.call(data).forEach((UoS)=>{
-                            res.append("<div><button class=\"w-100\" onclick=\"UoS.href = '\/UoS\/" + UoS.name + "\/'\">" + UoS.code + ": " + UoS.name + "</button></div>")
+                            res.append("<div><button class=\"w-100\" onclick=\"location.href = '\/UoS\/" + UoS.name + "\/'\">" + UoS.code + ": " + UoS.name + "</button></div>")
                         })
                     }
                 },

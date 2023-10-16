@@ -56,8 +56,11 @@ class UoSComment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     comment = models.CharField(max_length=255)
     uos = models.ForeignKey(UoS, on_delete=models.CASCADE, related_name='uos_comment', null=True, blank=True)
-    reports = models.IntegerField(default=0)
+    report=models.ManyToManyField(User, through='UoSRep', related_name='uos_reports')
 
+class UoSRep(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='uos_rep')
+    rep = models.ForeignKey(UoSComment, on_delete=models.CASCADE, null=True, blank=True, related_name='uos_rep')  
 
 class Faq(models.Model):
     question = models.CharField(max_length=250)

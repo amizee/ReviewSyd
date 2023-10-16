@@ -152,25 +152,18 @@ def subReview(request, loc):
     rev= request.GET.get('rev')
     locID=Locations.objects.get(name=loc)
     curr=request.user
-    totRev=locID.location_reviews.all().count()
-    if totRev==0:
-        avgA=amen
-        avgC=clean
-        avgN=noise
-    else:
-        A=locID.avgAmen
-        avgA=(A*totRev+int(amen))/(totRev+1)
-        C=locID.avgClean
-        avgC=(C*totRev+int(clean))/(totRev+1)
-        N=locID.avgNoise
-        avgN=(N*totRev+int(noise))/(totRev+1)
-
-    locID.avgAmen=avgA
-    locID.avgClean=avgC
-    locID.avgNoise=avgN
-    locID.save(update_fields=['avgNoise', 'avgClean', 'avgAmen'])
     review=LocationReviews(writtenReview = rev, cleanlinessRating = clean, amenitiesRating = amen, noisinessRating = noise, location = locID, user=curr)
     review.save()
+    if locID.location_reviews.all().count()==0:
+        locID.avgAmen=amen
+        locID.avgClean =clean
+        locID.avgNoise=noise
+    else:
+        locID.avgNoise = LocationReviews.objects.filter(location=locID).aggregate(Avg('noisinessRating'))['noisinessRating__avg']
+        locID.avgAmen = LocationReviews.objects.filter(location=locID).aggregate(Avg('amenitiesRating'))['amenitiesRating__avg']
+        locID.avgClean = LocationReviews.objects.filter(location=locID).aggregate(Avg('cleanlinessRating'))['cleanlinessRating__avg']
+    
+    locID.save(update_fields=['avgNoise', 'avgClean', 'avgAmen'])
     pRev=locID.location_reviews.filter(user=curr)
     oRev=locID.location_reviews.filter(~Q(user=curr))
     return render(request, "locReviews.html", {"location":location, "pRev":pRev, "oRev":oRev})
@@ -201,33 +194,22 @@ def delReview(request, loc):
     if primKey is None:
         return JsonResponse({'error': '"pk" parameter is missing'}, status=400)
 
-    location=Locations.objects.get(name=loc)
-    Review=location.location_reviews.get(pk=primKey)
-    totRev=location.location_reviews.all().count()
-    clean=Review.cleanlinessRating
-    amen=Review.amenitiesRating
-    noise=Review.noisinessRating
-    if totRev==1:
-        avgA=0
-        avgC=0
-        avgN=0
-    else:
-        A=location.avgAmen
-        avgA=(A*totRev-amen)/(totRev-1)
-        C=location.avgClean
-        avgC=(C*totRev-clean)/(totRev-1)
-        N=location.avgNoise
-        avgN=(N*totRev-noise)/(totRev-1)
-
-    location.avgAmen=avgA
-    location.avgClean=avgC
-    location.avgNoise=avgN
-    location.save(update_fields=['avgNoise', 'avgClean', 'avgAmen'])
+    locID=Locations.objects.get(name=loc)
+    Review=locID.location_reviews.get(pk=primKey)
     Review.delete()
+    if locID.location_reviews.all().count()==0:
+        locID.avgAmen=0
+        locID.avgClean=0
+        locID.avgNoise=0
+    else:
+        locID.avgNoise = LocationReviews.objects.filter(location=locID).aggregate(Avg('noisinessRating'))['noisinessRating__avg']
+        locID.avgAmen = LocationReviews.objects.filter(location=locID).aggregate(Avg('amenitiesRating'))['amenitiesRating__avg']
+        locID.avgClean = LocationReviews.objects.filter(location=locID).aggregate(Avg('cleanlinessRating'))['cleanlinessRating__avg']
+    locID.save(update_fields=['avgNoise', 'avgClean', 'avgAmen'])
     curr=request.user
-    pRev=location.location_reviews.filter(user=curr)
-    oRev=location.location_reviews.filter(~Q(user=curr))
-    return render(request, "locReviews.html", {"location":location, "pRev":pRev, "oRev":oRev})
+    pRev=locID.location_reviews.filter(user=curr)
+    oRev=locID.location_reviews.filter(~Q(user=curr))
+    return render(request, "locReviews.html", {"location":locID, "pRev":pRev, "oRev":oRev})
 
 def repReview(request, loc):
     val=request.GET.get('val')

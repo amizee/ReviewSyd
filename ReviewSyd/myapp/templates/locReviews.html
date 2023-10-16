@@ -220,7 +220,7 @@
                 url: 'submit/',
                 type: 'GET',
                 data: {'clean':clean,'amen':amen,'noise':noise,'rev':rev},
-                success:()=>{
+                success:(data)=>{
                     location.reload()
                 },
                 error: (error)=>{console.log(error)},
@@ -354,7 +354,7 @@
             url: 'del/',
             type: 'GET',
             data: {'pk':pk},
-            success:()=>{
+            success:(data)=>{
                 location.reload()
             },
             error: (error)=>{console.log(error)},

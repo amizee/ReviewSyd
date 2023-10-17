@@ -1,7 +1,8 @@
 {%extends "hf.html"%}
 {%block title%}Feedback{%endblock%}
 {%block content%}
-    <p>Feedback</p>
+    <h1 class="text-center" style="margin-top: 30px">User Feedback</h1>
+    <br>
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-{{ message.tags }}">
@@ -16,13 +17,13 @@
     <div class="container">
         <div class="row">
             <!-- left side part -->
-            <div class="col-md-6">
+            <div class="col-md-6 mx-auto">
                 
                 <form method="POST" action="{% url 'send_feedback' %}">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="name" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Username" required>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
@@ -34,18 +35,18 @@
                     </div>
                     <div class="mb-3">
                         <label for="message" class="form-label">Message</label>
-                        <textarea class="form-control" id="message" name="message" rows="4" placeholder="please leave your message" required></textarea>
+                        <textarea class="form-control" id="message" name="message" rows="4" placeholder="Please leave your message" required></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">Send</button>
                 </form>
             </div>
 
             <!-- right side part -->
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
                 <div style="background-color: lightblue; height: 100%; width: 100%;">
-                    <!-- replace with an image later -->
+
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 
@@ -61,7 +62,7 @@
                 } else if ($(this).attr('id') === 'subject') {
                     $(this).attr('placeholder', 'Subject');
                 } else if ($(this).attr('id') === 'message') {
-                    $(this).attr('placeholder', 'please leave your message');
+                    $(this).attr('placeholder', 'Please leave your message');
                 }
             });
         });

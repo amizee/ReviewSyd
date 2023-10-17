@@ -1,0 +1,64 @@
+{%extends "hf.html"%}
+{%block content%}
+    <style>
+        #map {
+            width: 120vh;
+            height: 75vh;
+            background-color: grey;
+            margin-top: 30px;
+        }
+    </style>
+
+    <div class="container" style="margin-bottom: 100px;">
+        <div class="row">
+            <div class="col-12 d-flex justify-content-center align-items-center">
+                <!-- add a new frame to include button and map, and up shift button a bit-->
+                <div>
+                    <div id="map"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function initMap() {
+            let usyd = {lat: -33.889822895943595, lng: 151.19212139725983};
+            let map = new google.maps.Map(
+                document.getElementById('map'), {zoom: 16, center: usyd, mapId: "fb18a56d52995976"}
+            );
+
+            addMarker({lat:-33.89020127405104, lng: 151.19306296611663}, 'PNR Learning Hub');
+            addMarker({lat:-33.88633127082905, lng:151.1904071550552}, 'Fisher Library');
+            addMarker({lat: -33.892248400281936, lng: 151.19099221979099}, 'Abercrombie Learning Hub');
+            addMarker({lat: -33.888250391622506, lng: 151.19070892740163}, 'Carslaw Learning Hub');
+
+            function addMarker(coords, name){
+                var marker = new google.maps.Marker({
+                    position: coords,
+                    map: map, 
+                    icon: {
+                        path: "M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z",
+                        fillColor: "blue", 
+                        fillOpacity: 0.7, 
+                        scale: 1.4, 
+                    }
+                });
+                const infoWindowOptions = {
+                    maxWidth: 200
+                };
+                const url = `/location/${name}/`;
+                const infoWindow = new google.maps.InfoWindow(infoWindowOptions);
+                const infoWindowOpen = {map: map, anchor: marker};
+                infoWindow.setContent(`
+                    <h6>${name}</h6>
+                    <a href="${url}">More information</a>
+                `);
+                infoWindow.open(infoWindowOpen);
+                marker.addListener("click", function (){
+                    infoWindow.open(infoWindowOpen);
+                });
+            }
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCx7tsiBYdfdoECxfmXorJjV43n9EgoGY0&callback=initMap&map_ids=fb18a56d52995976"></script>
+
+{%endblock%}

@@ -12,7 +12,7 @@
 
 <div class="container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
     <div class="col-md-6">
-        <div class="text-center"> <!-- Center-align the heading -->
+        <div class="text-center"> 
             <h3 class="py-4 px-3">Login</h3>
         </div>
 
@@ -27,13 +27,12 @@
                 <input type="password" class="form-control" id="password" name="password" placeholder="Password" style="border: 1px solid #ccc;">
             </div>
 
-            <div class="text-center"> <!-- Center-align the button -->
+            <div class="text-center">
                 <button type="submit" class="btn btn-primary btn-lg btn-block mb-3">Login</button>
             </div>
 
             <div class="row justify-content-center">
                 <div class="col-6 text-center">
-                    <!-- <a href="#" class="d-block">Forgot Password?</a> -->
                     <a href="{% url 'request_password_reset' %}" class="d-block">Forgot Password?</a>
                 </div>
                 <div class="col-6 text-center">

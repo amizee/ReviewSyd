@@ -3,10 +3,24 @@
 {% load static %}
 
 <style>
-.row>* {
-    padding-left: 0;
-    padding-right: 0;
-}
+    .row>* {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .map-button {
+        background-color: #E74726; 
+        border: 2px #E74726; 
+        color: white; 
+        padding: 10px 20px;
+        text-decoration: none; 
+    }
+
+    .map-button:hover {
+        background-color: white; 
+        border: 2px #E74726; 
+        color: #E74726; 
+    }
 </style>
 
 <div class="font-weight-bold h1 pb-3 text-center" style="margin-top: 40px" >Location List</div>
@@ -16,7 +30,7 @@
             <input type="search" id="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
         </div>
         <div class="col-1">
-            <a href="{% url 'locationsMap' %}" class="btn btn-outline-primary" style="margin-left: -225px; margin-top: 15px;">View locations as map</a>
+            <a href ="{% url 'locationsMap' %}" class="map-button" style="margin-left: -225px; margin-top: 15px; border: 2px solid;">View locations as a map</a>
         </div>
     </div>
 </div>

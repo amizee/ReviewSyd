@@ -157,14 +157,15 @@ def subReview(request, loc):
     review.save()
     if locID.location_reviews.all().count()==0:
         locID.avgAmen=amen
-        locID.avgClean =clean
+        locID.avgClean=clean
         locID.avgNoise=noise
+        locID.avgOverall=(amen+clean+noise)/3
     else:
         locID.avgNoise = LocationReviews.objects.filter(location=locID).aggregate(Avg('noisinessRating'))['noisinessRating__avg']
         locID.avgAmen = LocationReviews.objects.filter(location=locID).aggregate(Avg('amenitiesRating'))['amenitiesRating__avg']
         locID.avgClean = LocationReviews.objects.filter(location=locID).aggregate(Avg('cleanlinessRating'))['cleanlinessRating__avg']
-    
-    locID.save(update_fields=['avgNoise', 'avgClean', 'avgAmen'])
+        locID.avgOverall = (locID.avgNoise + locID.avgAmen + locID.avgClean)/3
+    locID.save(update_fields=['avgNoise', 'avgClean', 'avgAmen', 'avgOverall'])
     pRev=locID.location_reviews.filter(user=curr)
     oRev=locID.location_reviews.filter(~Q(user=curr))
     return render(request, "locReviews.html", {"location":location, "pRev":pRev, "oRev":oRev})
@@ -202,11 +203,13 @@ def delReview(request, loc):
         locID.avgAmen=0
         locID.avgClean=0
         locID.avgNoise=0
+        locID.avgOverall=0
     else:
         locID.avgNoise = LocationReviews.objects.filter(location=locID).aggregate(Avg('noisinessRating'))['noisinessRating__avg']
         locID.avgAmen = LocationReviews.objects.filter(location=locID).aggregate(Avg('amenitiesRating'))['amenitiesRating__avg']
         locID.avgClean = LocationReviews.objects.filter(location=locID).aggregate(Avg('cleanlinessRating'))['cleanlinessRating__avg']
-    locID.save(update_fields=['avgNoise', 'avgClean', 'avgAmen'])
+        locID.avgOverall = (locID.avgNoise + locID.avgAmen + locID.avgClean)/3
+    locID.save(update_fields=['avgNoise', 'avgClean', 'avgAmen', 'avgOverall'])
     curr=request.user
     pRev=locID.location_reviews.filter(user=curr)
     oRev=locID.location_reviews.filter(~Q(user=curr))

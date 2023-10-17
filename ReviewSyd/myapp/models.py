@@ -22,6 +22,7 @@ class Locations(models.Model):
     nearby = models.ManyToManyField('self', blank=True)
     image = models.ImageField(upload_to='location_images/', blank=True)
     amenities=models.ManyToManyField(Amenity, blank=True)
+    avgOverall=models.IntegerField(blank=True, default=0)
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

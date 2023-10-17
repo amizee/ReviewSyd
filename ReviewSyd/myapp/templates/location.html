@@ -100,8 +100,7 @@
                 
 
                 <div style="text-align: right;">
-                    <div style="background-color: rgb(0, 128, 255); padding: 10px; text-align: center; border-radius: 8px; width: 300px; display: inline-block;">
-                        <a class="text-white h4" href='/location/{{location.name}}/reviews/'>See Ratings and Reviews</a>
+                        <a class="btn btn-outline-primary" href='/location/{{location.name}}/reviews/' style="margin-left: -225px; margin-top: 15px;">See Ratings and Reviews</a>
                     </div>
                 </div>
                 
@@ -110,7 +109,7 @@
         <br>
         <br>
         <br>
-        <div class="row">
+        <div class="row"  style="margin-bottom: 50px;">
             <div class="col-6 h4">
                 Nearby POI
                 <br><br>
@@ -122,10 +121,6 @@
                     </div>
                 {% endfor %}
             </div>
-            
-            <!--<div class="col-6 h4">
-                nearby spaces
-            </div>!-->
         </div>
     </div>
 {%endblock%}

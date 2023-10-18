@@ -6,18 +6,18 @@
             
             <!-- Main content section -->
             <div class="col-md-6 mx-auto">
-                <h3 class="pt-2 pb-2">Account Settings</h3>
+                <h3 class="pt-2 pb-2" style="margin-top: 40px">Account Settings</h3>
 
                 <form id="accountSettingsForm" action="{% url 'accountSettings' %}" method="post">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="firstName" class="form-label">First Name</label>
-                        <input type="text" class="form-control" id="firstName" name="first_name" placeholder="First Name" value="{{ current_user.first_name }}">
+                        <input type="text" class="form-control" id="firstName" name="first_name" placeholder="First Name" value="{{ current_user.first_name }}" readonly>
                     </div>
                     
                     <div class="mb-3">
                         <label for="surname" class="form-label">Surname</label>
-                        <input type="text" class="form-control" id="surname" name="last_name" placeholder="Surname" value="{{ current_user.last_name }}">
+                        <input type="text" class="form-control" id="surname" name="last_name" placeholder="Surname" value="{{ current_user.last_name }}" readonly>
                     </div>
                     <div class="mb-3">
                         <br>

@@ -13,7 +13,7 @@
 
 <div class="container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
     <div class="col-md-6">
-        <div class="text-center"> <!-- Center-align the heading -->
+        <div class="text-center"> 
             <h3 class="py-4 px-3">Create an Account</h3>
         </div>
         <form id="signupForm" action="/signup/" method="post" class="needs-validation" novalidate>{% csrf_token %}
@@ -39,7 +39,6 @@
                 </div>
             </div>
             
-            <!-- if email address in use, show error message -->
             {% if messages %}
                 <div class="custom-alert justify-content-center">
                     {% for message in messages %}
@@ -59,7 +58,7 @@
                 <input type="password" class="form-control" id="confirm-password" placeholder="Confirm Password" style="border: 1px solid #ccc;" >
             </div>
 
-            <div class="text-center"> <!-- Center-align the button -->
+            <div class="text-center"> 
                 <button type="submit" class="btn btn-primary btn-lg btn-block mb-5">Sign Up</button>
             </div>
         </form>

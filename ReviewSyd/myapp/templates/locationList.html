@@ -46,9 +46,9 @@
                     style="text-decoration: none; color: inherit"
                 >
                     {% if location.image%}
-                        <img src="{{ location.image.url }}" class="card-img-top" alt="Location Image">
+                        <img src="{{ location.image.url }}" class="card-img-top" style="height: 240px;" alt="Location Image">
                     {%else%}
-                        <img src="{% static 'images/default_location.png' %}" alt="Location Image">
+                        <img src="{% static 'images/default_location.png' %}" style="height: 240px;" alt="Location Image">
                     {%endif%}
                     <div class="card-body">
                         <h6 class="card-text">{{ location.name }}</h6>

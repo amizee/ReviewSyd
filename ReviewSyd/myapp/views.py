@@ -125,7 +125,8 @@ def findTutor(request):
         'paginator': paginator,
         'page': page,
         'page_range': page_range,
-        'search_query': search_query
+        'search_query': search_query,
+        'navbar': 'tutor'
     })
 
 

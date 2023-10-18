@@ -18,7 +18,7 @@ from .models import PasswordResetToken
 from .forms import EmailForm, PasswordResetForm
 from django.db.models import Q
 from django.db.models import Avg
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 
@@ -77,10 +77,58 @@ def send_feedback_email(request):
     return render(request, 'feedback.html')
 
 
+
+
+# calculate how many pages should be shown
+def get_displayed_page_range(current_page, num_pages, max_display=5):
+    if num_pages <= max_display:
+        return range(1, num_pages + 1)
+    # Determine start and end page
+    start_page = max(current_page - max_display // 2, 1)
+    end_page = start_page + max_display - 1
+    if end_page > num_pages:
+        end_page = num_pages
+        start_page = end_page - max_display + 1
+    return range(start_page, end_page + 1)
+
 @login_required
 def findTutor(request):
-    tutors = Tutor.objects.all()  # get all tutor objects
-    return render(request, "findTutor.html", {'tutors': tutors, "navbar": "tutor"})
+    search_query = request.GET.get('search', '').strip()
+    page = request.GET.get('page', '').strip()  # get the page number from GET request, default is an empty string
+    if not page:
+        page = 1
+    else:
+        try:
+            page = int(page)
+        except ValueError:
+            page = 1
+
+    if search_query:
+        tutors = Tutor.objects.filter(Q(name__icontains=search_query) | Q(subject__icontains=search_query)).order_by('name')
+    else:
+        tutors = Tutor.objects.all().order_by('name')
+
+    paginator = Paginator(tutors, 9)  # Show 8 tutors per page
+    page_range = get_displayed_page_range(page, paginator.num_pages)
+
+    try:
+        current_page_tutors = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        current_page_tutors = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        current_page_tutors = paginator.page(paginator.num_pages)
+
+    return render(request, 'findTutor.html', {
+        'tutors': current_page_tutors,
+        'paginator': paginator,
+        'page': page,
+        'page_range': page_range,
+        'search_query': search_query
+    })
+
+
 
 @login_required
 def add_tutor(request):

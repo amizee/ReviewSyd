@@ -1,13 +1,25 @@
 {%extends "hf.html"%}{%block title%}UoS List{%endblock%}
 {%block content%}
+<style>
+    button {
+        border: 1px solid #000; 
+        border-top: none;
+        padding: 3px;
+    }
+
+    button.uos-button {
+        border-top: 1px solid #000;
+    }
+</style>
+
 <div class="font-weight-bold h1 pb-3 text-center" style="margin-top: 40px">UoS List</div>
 <div class="input-group rounded w-25 mx-auto py-3">
-    <input type="search" id="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+    <input type="search" id="search" class="form-control rounded" style="height: 42px;" placeholder="Search for units of study..." aria-label="Search" aria-describedby="search-addon" />
 </div>
 <div id="UoS" class="mx-auto w-50 pt-2 text-center">
     {%for UoS in UoStudies%}
         <div>
-            <button class="w-100" onclick="location.href = '/UoS/{{UoS.name}}/'">
+            <button class="{% if forloop.first %} uos-button {% endif %} w-100" onclick="location.href = '/UoS/{{UoS.name}}/'">
                 {{UoS.code}}: {{UoS.name}}
             </button>
         </div>
@@ -30,8 +42,13 @@
                         res.append('<p>No results found</p>')
                     }
                     else{
-                        Array.prototype.slice.call(data).forEach((UoS)=>{
-                            res.append("<div><button class=\"w-100\" onclick=\"location.href = '\/UoS\/" + UoS.name + "\/'\">" + UoS.code + ": " + UoS.name + "</button></div>")
+                        Array.prototype.slice.call(data).forEach((UoS, index)=>{
+                            if (index == 0) {
+                                res.append("<div><button class=\"uos-button w-100\" onclick=\"location.href = '\/UoS\/" + UoS.name + "\/'\">" + UoS.code + ": " + UoS.name + "</button></div>")
+                            }
+                            else {
+                                res.append("<div><button class=\"w-100\" onclick=\"location.href = '\/UoS\/" + UoS.name + "\/'\">" + UoS.code + ": " + UoS.name + "</button></div>")
+                            };
                         })
                     }
                 },

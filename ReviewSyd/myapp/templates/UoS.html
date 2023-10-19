@@ -1,4 +1,4 @@
-{%extends "hf.html"%}
+{%extends "hf.html"%}{%block title%}{{UoS.code}}{%endblock%}
 {%block content%}
 <div class="px-5 py-5">
     <div id="UoS" class="font-weight-bold h1 pb-3 text-center">{{UoS.code}}: {{UoS.name}}</div>
@@ -8,7 +8,8 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="card-text">
-                            <div class="row no-gutters"div>
+                            <div class="row no-gutters">
+                                <div>
                                     <button id="del" class="card mx-left border-0 d-flex">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                                             <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
@@ -83,7 +84,7 @@
     <form id="commentForm" class="needs-validation mx-auto w-50 card text-center px-3" novalidate>
         <div class="py-2">
             <label for="Comment" class="form-label">Comment</label>
-            <input type="text" class="form-control" id="Comment" rows="5" placeholder="Comment" style="border: 1px solid #ccc;" required>
+            <textarea type="text" class="form-control" id="Review" rows="3" placeholder="Review" style="border: 1px solid #ccc;" required></textarea>
             <div class="invalid-feedback">Missing field</div>
         </div>
         <div class="d-flex justify-content-end">
@@ -110,7 +111,7 @@
                 url: 'submit/',
                 type: 'GET',
                 data: {'com':com},
-                success:()=>{
+                success:(data)=>{
                     location.reload()
                 },
                 error: (error)=>{console.log(error)},

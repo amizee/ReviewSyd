@@ -1,4 +1,4 @@
-{%extends "hf.html"%}{%block title%}location{%endblock%}
+{%extends "hf.html"%}{%block title%}{{location.name}}{%endblock%}
 {%block content%}
 {% load static %}
 
@@ -19,11 +19,10 @@
 </style>
 
 
-    <div class="px-5">
+    <div class="container">
         <br>
         <br>
         <div class="font-weight-bold h1 pb-3 text-center">{{location.name}}</div>
-        <br>
         <br>
         <div class="row">
             <div class="col-6">
@@ -35,8 +34,9 @@
                         </svg>
                         <div class="col-11">{{location.location}}</div>
                     </div>
+                    <br>
                 {%endif%}
-                <br>
+                
                 {% if location.phone_number != "" %}
                     <div class="row" style="font-size: 18px;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill col-1" viewBox="0 0 16 16">
@@ -44,8 +44,9 @@
                         </svg>
                         <div class="col-11">{{location.phone_number}}</div>
                     </div>
+                    <br>
                 {%endif%}
-                <br>
+                
                 {% if location.hours != "" %}
                     <div class="row" style="font-size: 18px;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock-fill col-1" viewBox="0 0 16 16">
@@ -53,8 +54,9 @@
                         </svg>
                         <div class="col-11">{{location.hours}}</div>
                     </div>
+                    <br>
                 {%endif%}
-                <br>
+                
                 {% if location.website != "" %}
                     <div class="row" style="font-size: 18px;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-browser-chrome class=1 col-1" viewBox="0 0 16 16">
@@ -62,73 +64,67 @@
                         </svg>
                         <a class="col-11" style="color:#E74726;" href='{{location.website}}'>{{location.name}}'s Website</a>
                     </div>
+                    <br>
                 {%endif %}
-                <br>
+                
                 {% if location.amenities.all %}
-    <div class="row" style="font-size: 18px;">
-        {% for amenity in location.amenities.all %}
-            <div class="col-md-4">
-                <img src="{{amenity.image.url}}" alt="{{ amenity.name }}" style="width: 100px; height: 100px; margin-right: 20px;">
-                <div>{{ amenity.name }}</div>
-            </div>
-        {% endfor %}
-    </div>
-{% endif %}
-
-
+                    <div class="container" style="text-align: center;">
+                        <div class="row" style="font-size: 18px;">
+                            {% for amenity in location.amenities.all %}
+                                <div class="col-4">
+                                    <img src="{{amenity.image.url}}" alt="{{ amenity.name }}" style="height: 90px; width: 90px;">
+                                    <div style="text-align: center;">{{ amenity.name }}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
             </div> 
             <div class="col-6">
                 {% if location.image%}
                     <div class="col-6" style="margin-left: 150;">
-                        <img src="{{ location.image.url }}" alt="Location Image" style="width: 500px; height: 500px;">
+                        <img src="{{ location.image.url }}" alt="Location Image" style="width: 640px; height: 480px;">
                     </div>
                 {%else%}
-                    <img src="{% static 'images/default_location.png' %}" alt="Location Image" style="width: 500px; height: 500px;">
+                    <img src="{% static 'images/default_location.png' %}" alt="Location Image" style="width: 640px; height: 480px;">
                 {%endif%}
             </div>
         </div>
+        <hr class="my-4 bg-dark"/>
         <div class="mx-auto w-50">
             <div class="w-100 border-0">
                 <div class="row py-2">
                     <div class="col-4 mx-auto">
                         <div class="card">
-                            <div class="card-body text-center d-flex flex-column justify-content-center align-items-center" style="width: 250px; height: 100px;">
-                                <h5 class="card-title">Cleanliness Rating</h5>
+                            <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
+                                <h6 class="card-title">Cleanliness Rating</h6>
                                 <p class="card-text">{{location.avgClean}}</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-4 mx-auto">
                         <div class="card">
-                            <div class="card-body text-center d-flex flex-column justify-content-center align-items-center" style="width: 250px; height: 100px;">
-                                <h5 class="card-title">Amenities Rating</h5>
+                            <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
+                                <h6 class="card-title">Amenities Rating</h6>
                                 <p class="card-text">{{location.avgAmen}}</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-4 mx-auto">
                         <div class="card">
-                            <div class="card-body text-center d-flex flex-column justify-content-center align-items-center" style="width: 250px; height: 100px;">
-                                <h5 class="card-title">Noise Level Rating</h5>
+                            <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
+                                <h6 class="card-title">Noise Level Rating</h6>
                                 <p class="card-text">{{location.avgNoise}}</p>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-
-                <div style="text-align: right; margin-top: 15px; ">
-                <a class="custom-button" href="/location/{{location.name}}/reviews/" style="margin-left: -225px; border: 2px solid;">View/Leave Reviews</a>
-                </div>
-
-
-                </div>
-                
+                    <div class="mt-4" style="text-align: center;">
+                        <a class="custom-button rounded" href="/location/{{location.name}}/reviews/" style="border: 2px solid;">View/Leave Reviews</a>
+                    </div> 
+                </div>         
             </div>
         </div>
-        <br>
-        <br>
-        <br>
+        <hr class="my-4 bg-dark"/>
         <div class="row"  style="margin-bottom: 80px; margin-left: 30px">
             <div class="col-6 h4">
                 Nearby POI

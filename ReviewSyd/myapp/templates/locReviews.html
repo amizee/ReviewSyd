@@ -1,10 +1,10 @@
 {%extends "hf.html"%}{%block title%}Reviews{%endblock%}
 {%block content%}
-<div class="px-5 py-5">
+<div class="container-fluid px-5 py-5" style="margin-bottom: 175px;">
     <div id="loc" class="font-weight-bold h1 pb-3 text-center">{{location.name}}</div>
     <div class="row text-center pb-5">
         <div class="col-3 mx-auto">
-            <div class="card border-0">
+            <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Cleanliness Rating</h5>
                     <p class="card-text">{{location.avgClean}}</p>
@@ -12,16 +12,16 @@
             </div>
         </div>
         <div class="col-3 mx-auto">
-            <div class="card border-0">
-                <div class="card-body">
+            <div class="card">
+                <div class="card-body text-center">
                     <h5 class="card-title">Amenities Rating</h5>
                     <p class="card-text">{{location.avgAmen}}</p>
                 </div>
             </div>
         </div>
         <div class="col-3 mx-auto">
-            <div class="card border-0">
-                <div class="card-body">
+            <div class="card">
+                <div class="card-body text center">
                     <h5 class="card-title">Noise Level Rating</h5>
                     <p class="card-text">{{location.avgNoise}}</p>
                 </div>
@@ -31,11 +31,12 @@
     <div class="row text-center pb-3" id="reviews-container">
         {% for review in pRev %}
             <div class="col-md-12" style="margin-bottom: 10px;">
+                <div class="col-md-12" style="margin-bottom: 10px;">
                 <div class="card">
                     <div class="card-body">
                         <div class="card-text">
                             <!-- Main row for review details -->
-                            <div class="row no-gutters">
+                            <div class="row align-items-center">
                                 <div>
                                     <button id="del" class="card mx-left border-0 d-flex">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
@@ -62,7 +63,7 @@
                                         <div class = "card">
                                             <p class="mr-3">Amenities Rating: {{ review.amenitiesRating }}</p>
                                         </div>
-                                        <div class = "card">
+                                        <div class = "card" >
                                             <p>Noisiness Rating: {{ review.noisinessRating }}</p>
                                         </div>
                                     </div>
@@ -97,7 +98,7 @@
                     <div class="card-body">
                         <div class="card-text">
                             <!-- Main row for review details -->
-                            <div class="row no-gutters">
+                            <div class="row align-items-center">
                                 <div>
                                     {% if user in review.report.all %}
                                         <button id="reported" class="card mx-left border-0 d-flex">
@@ -163,10 +164,12 @@
             </div>
         {% endfor %}
         {% if location.location_reviews.all|length > 3 %}
-        <div class="pt-3">
-            <button id="loadMore" class="btn btn-secondary btn-sm mb-2 btn-block ">
-                Load More
-            </button>
+        <div class="col-md-8">
+            <div class="pt-3 text-center">
+                <button id="loadMore" class="btn btn-secondary btn-sm mb-2">
+                    Load More
+                </button>
+            </div>
         </div>
         {% endif %}
     </div>
@@ -194,7 +197,7 @@
             <div class="invalid-feedback">Missing field</div>
         </div>
         <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary btn-sm mb-2 btn-block ">Submit Review</button>
+            <button type="submit" class="btn btn-sm mb-2 btn-block "  style="background-color: #E74726;">Submit Review</button>
         </div>
     </form>
 </div>

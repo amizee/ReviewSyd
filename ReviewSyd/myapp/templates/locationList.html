@@ -23,14 +23,16 @@
     }
 </style>
 
-<div class="font-weight-bold h1 pb-3 text-center" style="margin-top: 40px" >Location List</div>
+<div class="font-weight-bold h1 pb-3 text-center" style="margin-top: 40px" >Locations</div>
 <div class="container">
-    <div class="row">
-        <div class="input-group rounded mx-auto py-3" style="width: 40%;">
-            <input type="search" id="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+    <div class="row justify-content-center align-items-center">
+        <div class="col-md-6">
+            <div class="input-group rounded py-3">
+                <input type="search" id="search" class="form-control rounded" style="height: 42px;" placeholder="Search for locations..." aria-label="Search" aria-describedby="search-addon" />
+            </div>
         </div>
-        <div class="col-1">
-            <a href ="{% url 'locationsMap' %}" class="map-button" style="margin-left: -225px; margin-top: 15px; border: 2px solid;">View locations as a map</a>
+        <div class="col-md-3 d-flex justify-content-end">
+            <a href ="{% url 'locationsMap' %}" class="map-button rounded" style="border: 2px solid;">View locations as a map</a>
         </div>
     </div>
 </div>
@@ -44,9 +46,9 @@
                     style="text-decoration: none; color: inherit"
                 >
                     {% if location.image%}
-                        <img src="{{ location.image.url }}" class="card-img-top" alt="Location Image">
+                        <img src="{{ location.image.url }}" class="card-img-top" style="height: 240px;" alt="Location Image">
                     {%else%}
-                        <img src="{% static 'images/default_location.png' %}" alt="Location Image">
+                        <img src="{% static 'images/default_location.png' %}" style="height: 240px;" alt="Location Image">
                     {%endif%}
                     <div class="card-body">
                         <h6 class="card-text">{{ location.name }}</h6>

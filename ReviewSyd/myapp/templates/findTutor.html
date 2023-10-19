@@ -111,24 +111,38 @@
         transform: translateY(-50%);
         pointer-events: none;
     }
+
+    .ad-button {
+        background-color: #E74726; 
+        border: 2px solid #E74726; 
+        color: white; 
+        padding: 9px 15px;
+        text-decoration: none; 
+    }
+
+    .ad-button:hover {
+        background-color: white; 
+        border: 2px solid #E74726; 
+        color: #E74726; 
+    }
 </style>
 
 <div class="container">
     <div class="row my-4">
-        <div class="col-md-5 mx-auto">
+        <div class="col-md-6 mx-auto">
           <form method="get" action="{% url 'findTutor' %}" id="searchForm">
             <div class="input-group">
-                <input type="text" class="form-control" name="search" id="search" value="{{ search_query }}" placeholder="Search tutors...">
+                <input type="text" class="form-control rounded" name="search" id="search" value="{{ search_query }}" placeholder="Search tutors...">
                 <div class="input-group-append">
-                    <button type="submit" class="btn btn-primary" style="margin-left: 15px;">Search</button>
-                    <button type="button" class="btn btn-secondary" id="clearSearch">Clear</button>
+                    <button type="submit" class="btn btn-primary" style="margin-left: 15px; height: 42px;">Search</button>
+                    <button type="button" class="btn btn-secondary" style="height: 42px;" id="clearSearch" >Clear</button>
                 </div>
             </div>
         </form>
         </div>
         <!-- Add Button -->
         <div class="col-md-1">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTutorModal" style="white-space: nowrap; padding: 10px 15px; margin-left: -130px;">Post an Ad</button>
+            <button type="button" class="btn ad-button" data-bs-toggle="modal" data-bs-target="#addTutorModal" style="margin-left: -130px;">Post an Ad</button>
         </div>
     </div>
 

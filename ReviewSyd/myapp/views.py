@@ -61,9 +61,6 @@ def send_feedback_email(request):
         # form the message sending to us
         full_message = f"Message from {user_name}\nEmail: {user_email}\n\n{message}"
 
-        # full_message = f"Message from {user_name} <{user_email}>:\n\n{message}"
-        print(full_message)
-        # Send email
         send_mail(
             subject,
             full_message,
@@ -336,17 +333,16 @@ def login_view(request):
     if request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
-
-        # Django authenticaiton
         user = authenticate(request, username=email, password=password)
         
         if user is not None:
             auth_login(request, user)
-            print('Yes')
-            return redirect('/')
+            # return success message
+            return JsonResponse({'status': 'success'})
         else:
-            print('No')
-            messages.error(request, 'Invalid email or password !!')
+            # return error message
+            return JsonResponse({'status': 'error', 'message': 'Invalid email or password'}, status=400)
+    
     return render(request, 'login.html')
 
 
@@ -364,13 +360,6 @@ def signup(request):
         # create a new user
         user = User.objects.create_user(username=email, email=email, password=password, first_name=first_name, last_name=surname)
 
-        # create a userprofile
-        # user_profile = UserProfile(
-        #     user=user,
-        #     first_name=first_name,
-        #     surname=surname,
-        #     email=email,
-        # )
         user_profile = UserProfile(user=user)
         user_profile.save()
 
@@ -462,7 +451,7 @@ def request_password_reset(request):
                 PasswordResetToken.objects.create(user=user, token=token, expiration_date=expiration_date)
                 reset_url = f"http://127.0.0.1:8000/reset-password?token={token}"
                 send_mail('Password Reset', f'Click {reset_url} to reset your password.', 'robinwu40@gmail.com', [email])
-                success_message = "Reset link successfully sent."
+                success_message = "Reset link successfully sent. Please click the link sent to your email and conduct password reset."
             else:
                 message = "This is not a valid email address."
     else:
@@ -495,11 +484,13 @@ def reset_password(request):
                 user.save()
                 reset_token.delete()
                 print(f"Password reset successfully for user: {user.username}")
-                return redirect('/login/')
+                return JsonResponse({'success': True, 'message': 'Password reset successfully.'})
             else:
                 print("New password and confirm password do not match.")
+                return JsonResponse({'success': False, 'message': 'Passwords do not match.'})
         else:
             print(f"Form errors: {form.errors}")
+            return JsonResponse({'success': False, 'message': 'Form errors.', 'errors': form.errors})
     else:
         form = PasswordResetForm()
-    return render(request, 'reset_password.html', {'form': form})
+        return render(request, 'reset_password.html', {'form': form})

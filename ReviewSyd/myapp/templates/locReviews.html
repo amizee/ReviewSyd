@@ -1,4 +1,4 @@
-{%extends "hf.html"%}
+{%extends "hf.html"%}{%block title%}Reviews{%endblock%}
 {%block content%}
 <div class="px-5 py-5">
     <div id="loc" class="font-weight-bold h1 pb-3 text-center">{{location.name}}</div>
@@ -30,7 +30,7 @@
     </div>
     <div class="row text-center pb-3" id="reviews-container">
         {% for review in pRev %}
-            <div class="col-md-12">
+            <div class="col-md-12" style="margin-bottom: 10px;">
                 <div class="card">
                     <div class="card-body">
                         <div class="card-text">
@@ -190,7 +190,7 @@
         </div>
         <div class="py-2">
             <label for="Review" class="form-label">Review</label>
-            <input type="text" class="form-control" id="Review" rows="5" placeholder="Review" style="border: 1px solid #ccc;" required>
+            <textarea type="text" class="form-control" id="Review" rows="3" placeholder="Review" style="border: 1px solid #ccc;" required></textarea>
             <div class="invalid-feedback">Missing field</div>
         </div>
         <div class="d-flex justify-content-end">

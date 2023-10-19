@@ -1,4 +1,4 @@
-{%extends "hf.html"%}
+{%extends "hf.html"%}{%block title%}{{UoS.code}}{%endblock%}
 {%block content%}
 <div class="px-5 py-5">
     <div id="UoS" class="font-weight-bold h1 pb-3 text-center">{{UoS.code}}: {{UoS.name}}</div>
@@ -83,7 +83,7 @@
     <form id="commentForm" class="needs-validation mx-auto w-50 card text-center px-3" novalidate>
         <div class="py-2">
             <label for="Comment" class="form-label">Comment</label>
-            <input type="text" class="form-control" id="Comment" rows="5" placeholder="Comment" style="border: 1px solid #ccc;" required>
+            <textarea type="text" class="form-control" id="Review" rows="3" placeholder="Review" style="border: 1px solid #ccc;" required></textarea>
             <div class="invalid-feedback">Missing field</div>
         </div>
         <div class="d-flex justify-content-end">

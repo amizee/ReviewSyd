@@ -1,5 +1,21 @@
 {%extends "hf.html"%}{%block title%}Reviews{%endblock%}
 {%block content%}
+<style>
+    .review-button {
+        background-color: #E74726; 
+        border: 2px #E74726; 
+        color: white; 
+        padding: 10px 20px;
+        text-decoration: none; 
+    }
+
+    .review-button:hover {
+        background-color: white; 
+        border: 2px solid #E74726; 
+        color: #E74726; 
+    }
+</style>
+
 <div class="container-fluid px-5 py-5" style="margin-bottom: 175px;">
     <div id="loc" class="font-weight-bold h1 pb-3 text-center">{{location.name}}</div>
     <div class="row text-center pb-5">
@@ -197,7 +213,7 @@
             <div class="invalid-feedback">Missing field</div>
         </div>
         <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-sm mb-2 btn-block "  style="background-color: #E74726;">Submit Review</button>
+            <button type="submit" class="btn btn-sm mb-2 btn-block review-button">Submit Review</button>
         </div>
     </form>
 </div>

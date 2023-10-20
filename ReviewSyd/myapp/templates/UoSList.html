@@ -18,7 +18,7 @@
 <div class="input-group rounded w-25 mx-auto py-3">
     <input type="search" id="search" class="form-control rounded" style="height: 42px;" placeholder="Search for a unit of study" aria-label="Search" aria-describedby="search-addon" />
 </div>
-<div id="UoS" class="mx-auto w-50 pt-2 text-center">
+<div id="UoS" class="mx-auto w-50 pt-2 text-center" style="margin-bottom: 80px;">
     {%for UoS in UoStudies%}
         <div>
             <button class="{% if forloop.first %} uos-button {% endif %} w-100" onclick="location.href = '/UoS/{{UoS.name}}/'">

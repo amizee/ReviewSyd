@@ -2,7 +2,7 @@ from venv import logger
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, HttpResponse, redirect
 from .models import *
-from django.core.mail import send_mail
+from django.core.mail import send_mail, BadHeaderError
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.models import User
@@ -19,6 +19,7 @@ from .forms import EmailForm, PasswordResetForm
 from django.db.models import Q
 from django.db.models import Avg
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import random
 
 
 
@@ -346,26 +347,79 @@ def login_view(request):
     return render(request, 'login.html')
 
 
+
 def signup(request):
     if request.method == "POST":
         first_name = request.POST['first_name']
         surname = request.POST['surname']
         email = request.POST['email'] + "@uni.sydney.edu.au"
-        if User.objects.filter(username=email).exists():
-            # This email (username) is already taken
-            messages.error(request, 'The email address is already in use.')
-            return redirect('signup')  # Redirect back to the signup page
+        
+        # if User.objects.filter(username=email).exists():
+        #     # This email (username) is already taken
+        #     messages.error(request, 'The email address is already in use.')
+        #     return redirect('signup')  # Redirect back to the signup page
+        
+        # # Validate verification code
+        # code_entered = request.POST.get('verify')
+        # if verification_codes.get(email) != code_entered:
+        #     messages.error(request, 'Invalid verify code.')
+        #     return redirect('signup')  # Redirect back to the signup page
+
         password = request.POST['password']
 
-        # create a new user
+        # Create a new user
         user = User.objects.create_user(username=email, email=email, password=password, first_name=first_name, last_name=surname)
 
         user_profile = UserProfile(user=user)
         user_profile.save()
 
-        return redirect('/login/')  # rederict to sign in page
+        return redirect('/login/')  # Redirect to sign in page
+
     return render(request, "signup.html")
 
+
+
+verification_codes = {}
+
+def verify_email(request):
+    email = request.POST.get('email')
+    
+    # Check if the email exists for any user
+    if  User.objects.filter(email=email).exists():
+        return JsonResponse({"success": False, "error": "Current user already exist."})
+
+    code = str(random.randint(100000, 999999))
+    verification_codes[email] = code
+    print(code)
+
+    try:
+        send_mail(
+            'Your Verification Code',
+            f'Your verification code is: {code}',
+            'robinwu40@gmail.com',
+            [email],
+            fail_silently=False,
+        )
+        return JsonResponse({"success": True})
+
+    except BadHeaderError:
+        # Header problems with the email
+        return JsonResponse({"success": False, "error": "Email sending failed due to bad headers."})
+    except Exception as e:
+        # Some other exception occurred during sending mail
+        return JsonResponse({"success": False, "error": "Email sending failed."})
+
+
+def check_verification_code(request):
+    if request.method == "POST":
+        email = request.POST.get('email')
+        code_entered = request.POST.get('code')
+        
+        if verification_codes.get(email) == code_entered:
+            return JsonResponse({"success": True})
+        else:
+            return JsonResponse({"success": False, "error": "Invalid verification code."})
+    return JsonResponse({"success": False, "error": "Invalid request."})
 
 @login_required
 def signupCompletion(request):

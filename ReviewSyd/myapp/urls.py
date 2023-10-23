@@ -35,6 +35,11 @@ urlpatterns=[
     path('logout/', views.logout_view, name='logout_view'),
     path('request-password-reset/', views.request_password_reset, name='request_password_reset'),
     path('reset-password/', views.reset_password, name='reset_password'),
+    path('verify_email/', views.verify_email, name="verify_email"),
+    path('check_verification_code/', views.check_verification_code, name='check_verification_code'),
+    path('update_name/', views.update_name, name='updateName'),
+    path('verify_current_password/', views.verify_current_password, name='verify_current_password'),
+    path('update_password/', views.update_password, name='update_password'),
 ]
 
 if settings.DEBUG:

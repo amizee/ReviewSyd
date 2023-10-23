@@ -9,6 +9,11 @@
         font-weight: bold;
         font-size: larger;
     }
+
+    #verify-btn {
+        width: 150px; /* Adjust this value to your liking */
+    }
+    
 </style>
 
 <div class="container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
@@ -16,37 +21,29 @@
         <div class="text-center"> 
             <h3 class="py-4 px-3">Create an Account</h3>
         </div>
-        <form id="signupForm" action="/signup/" method="post" class="needs-validation" novalidate>{% csrf_token %}
+        <form id="signupForm" action="/signup/" method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
 
             <div class="mb-3">
                 <label for="firstname" class="form-label">First Name</label>
                 <input type="text" class="form-control" id="firstname" name="first_name" placeholder="First Name" style="border: 1px solid #ccc;" required>
-                <div class="invalid-feedback">Invalid First Name</div>
             </div>
 
             <div class="mb-3">
                 <label for="surname" class="form-label">Surname</label>
                 <input type="text" class="form-control" id="surname" name="surname" placeholder="Surname" style="border: 1px solid #ccc;" required>
-                <div class="invalid-feedback">Invalid Surname</div>
             </div>
 
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" id="email" name="email" pattern="^[a-z]{4}[0-9]{4}$" placeholder="Email" style="border: 1px solid #ccc;" required>
+                    <input type="text" class="form-control" id="email" name="email" placeholder="Email" style="border: 1px solid #ccc;" required>
                     <span class="input-group-text">@uni.sydney.edu.au</span>
                     <div class="invalid-feedback">Invalid Email</div>
                 </div>
             </div>
-            
-            {% if messages %}
-                <div class="custom-alert justify-content-center">
-                    {% for message in messages %}
-                        <strong>{{ message }}</strong>
-                    {% endfor %}
-                </div>
-            {% endif %}
 
+            
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" id="password" name="password" placeholder="Password" style="border: 1px solid #ccc;" required>
@@ -55,7 +52,16 @@
 
             <div class="mb-3">
                 <label for="confirm-password" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" id="confirm-password" placeholder="Confirm Password" style="border: 1px solid #ccc;" >
+                <input type="password" class="form-control" id="confirm-password" placeholder="Confirm Password" style="border: 1px solid #ccc;" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="verify" class="form-label">Verify Email</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="verify" name="verify" placeholder="Enter Verification Code" style="border: 1px solid #ccc;" required>
+                    <button class="btn btn-primary" id="verify-btn">Send verify code</button>
+                </div>
+                <div id="verify-feedback" class="invalid-feedback"></div>
             </div>
 
             <div class="text-center"> 
@@ -67,16 +73,24 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script>
 
-    // error message
+<script>
+    var countdown; // this will hold the countdown interval
+
     $(document).ready(function () {
         $('input, textarea').on('input', function() {
             $('.custom-alert').hide();
         });
-    });
 
-    $(document).ready(function () {
+        $("#verify").on('input', function() {
+            $("#verify-feedback").hide();
+            $(this).removeClass("is-invalid");
+        });
+
+        $("#confirm-password").on('input', function () {
+            validateConfirmPassword();
+        });
+
         $('input, textarea').focus(function () {
             $(this).removeAttr('placeholder');
         }).blur(function () {
@@ -92,69 +106,214 @@
                 $(this).attr('placeholder', 'Confirm Password');
             }
         });
-        validate()
+
+        $("form").on("submit", function(e) {
+            e.preventDefault();
+            handleFormSubmit();
+        });
+
+        // validate();
+
+        $("#verify-btn").click(function (e) {
+            e.preventDefault();
+
+            // Disable the button and start the countdown
+            $(this).prop("disabled", true);
+            startCountdown();
+
+            var email = $("#email").val() + "@uni.sydney.edu.au";
+            var csrfToken = $('[name="csrfmiddlewaretoken"]').val();
+            
+            $.ajax({
+                url: "/verify_email/",
+                type: "POST",
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                data: { email: email },
+                success: function(response) {
+
+                    console.log("Response from server:", response);  // Add this line
+                    if(response.success) {
+                        showMessage("Email already sent, please check.", 'success');
+                    } else {
+                        showMessage(response.error);  // Display the error from the backend
+                    }
+                },
+                error: function() {
+                    showMessage("An unexpected error occurred");
+                },
+                complete: function(xhr, textStatus) {
+                    console.log("Request completed with status:", textStatus);
+                }
+            });
+        });
+
+        toggleVerifyButton();
+        $("#firstname, #surname, #email, #password, #confirm-password").on('input', function() {
+            toggleVerifyButton();
+        });
+        
+        toggleSignUpButton();
+        $("#firstname, #surname, #email, #password, #confirm-password, #verify").on('input', function() {
+            toggleSignUpButton();
+        });
+
     });
-    // Add an event listener for the form submission
-    //Validate fields
-    validate=()=>{
-        'use strict'
-        var form=document.querySelector('.needs-validation')
-        form.addEventListener('submit', (e)=>{
-            if(!form.checkValidity()){
-                e.preventDefault()
-                e.stopPropagation()
-            }
+    
 
-            // email validation check
-            var emailPattern = /^[a-z]{4}[0-9]{4}$/;
-            var email = document.querySelector('#email');
-            if (!emailPattern.test(email.value)) {
-                var invalidFeedback=document.createElement("div");
-                invalidFeedback.textContent="Email should have 4 lowercase letters followed by 4 digits";
-                invalidFeedback.classList.add("invalid-feedback");
-                if (email.nextElementSibling!==null) {
-                    email.nextElementSibling.remove();
-                    email.classList.remove("is-invalid");
-                }
-                email.insertAdjacentHTML("afterend", invalidFeedback.outerHTML);
-                email.classList.add("is-invalid");
-                
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            else {
-                if (email.nextElementSibling!==null) {
-                    email.nextElementSibling.remove();
-                    email.classList.remove("is-invalid");
-                }
-            }
-            form.classList.add('was-validated');
-
-            // password double check
-            var conpass=document.querySelector('#confirm-password')
-            if(conpass.value!==document.querySelector('#password').value)
-            {
-                var invalidFeedback=document.createElement("div")
-                invalidFeedback.textContent="Passwords must match"
-                invalidFeedback.classList.add("invalid-feedback")
-                if (conpass.nextElementSibling!==null) {
-                    conpass.nextElementSibling.remove();
-                    conpass.classList.remove("is-invalid");
-                }
-                conpass.insertAdjacentHTML("afterend", invalidFeedback.outerHTML)
-                conpass.classList.add("is-invalid")
-                
-                e.preventDefault()
-                e.stopPropagation()
-            }
-            else{
-                if (conpass.nextElementSibling!==null) {
-                    conpass.nextElementSibling.remove();
-                    conpass.classList.remove("is-invalid");
-                }
-            }
-            form.classList.add('was-validated')
-        })
+    function showMessage(message, type = 'error') {
+        var messageDiv = $("#verify-feedback");
+        messageDiv.text(message).css("display", "block"); 
+        if(type === 'error') {
+            messageDiv.css("color", "red");
+            $("#verify").addClass("is-invalid");
+        } else if(type === 'success') {
+            messageDiv.css("color", "green");
+            $("#verify").removeClass("is-invalid");
+        }
     }
+
+
+    function toggleVerifyButton() {
+        var allFilled = true;
+        var emailValid = validateEmail($('#email').val() + "@uni.sydney.edu.au");
+
+        $('#firstname, #surname, #email, #password, #confirm-password').each(function() {
+            if ($(this).val().trim() === '' || ($(this).is('#email') && !emailValid)) {
+                allFilled = false;
+                return false; // Break out of the .each() loop
+            }
+        });
+        // console.log("All fields filled:", allFilled, "Email valid:", emailValid);
+
+        $("#verify-btn").prop("disabled", !(allFilled && emailValid));
+    }
+    
+
+
+    function toggleSignUpButton() {
+        var allFilled = true;
+        var emailValid = validateEmail($('#email').val() + "@uni.sydney.edu.au");
+        var password = $('#password').val();
+        var confirmPassword = $('#confirm-password').val();
+        var passwordsMatch = password === confirmPassword;
+        $('#firstname, #surname, #email, #password, #confirm-password, #verify').each(function() {
+            if ($(this).val().trim() === '') {
+                allFilled = false;
+                return false; // Break out of the .each() loop
+            }
+        });
+        $("button[type=submit]").prop("disabled", !(allFilled && emailValid && passwordsMatch));
+        // $("button[type=submit]").prop("disabled", !allFilled);
+    }
+
+    function validateEmail(email) {
+        var regex = /^[a-z]{4}\d{4}@uni\.sydney\.edu\.au$/;
+        var isValid = regex.test(email);
+        // console.log("Validating email:", email, "Result:", isValid);
+        return isValid;
+    }
+
+    $("#email").on('input', function () {
+        var email = $(this).val() + "@uni.sydney.edu.au";
+        if (!validateEmail(email)) {
+            $(this).addClass("is-invalid");
+            $("#verify-btn").prop("disabled", true);
+        } else {
+            $(this).removeClass("is-invalid");
+            $("#verify-btn").prop("disabled", false);
+            toggleVerifyButton(); 
+        }
+        toggleSignUpButton();
+    });
+
+    function validateConfirmPassword() {
+        var password = $("#password").val();
+        var confirmPassword = $("#confirm-password").val();
+
+        if (confirmPassword !== password) {
+            $("#confirm-password").addClass("is-invalid");
+        } else {
+            $("#confirm-password").removeClass("is-invalid");
+        }
+        toggleSignUpButton();
+    }
+
+
+    function startCountdown() {
+        var duration = 5; // 60 seconds
+        $("#verify-btn").text(duration + "s remaining");
+
+        countdown = setInterval(function() {
+            duration--;
+            $("#verify-btn").text(duration + "s remaining");
+            if(duration <= 0) {
+                clearInterval(countdown);
+                $("#verify-btn").prop("disabled", false).text("Send verify code");
+            }
+        }, 1000);
+    }
+
+    function handleFormSubmit() {
+    var email = $("#email").val() + "@uni.sydney.edu.au";
+    var code = $("#verify").val();
+    var csrfToken = $('[name="csrfmiddlewaretoken"]').val();
+
+    $.ajax({
+        url: "/check_verification_code/",
+        type: "POST",
+        headers: {
+            'X-CSRFToken': csrfToken
+        },
+        data: { email: email, code: code },
+        success: function(response) {
+            if(response.success) {
+                document.querySelector("form").submit(); 
+            } else {
+                showMessage("Invalid verification code.", 'error');
+            }
+        },
+        error: function() {
+            showMessage("An unexpected error occurred.");
+        }
+    });
+}
+
+
+    // function validate() {
+    //     'use strict';
+    //     var form = document.querySelector('.needs-validation');
+    //     form.addEventListener('submit', (e) => {
+    //         if(!form.checkValidity()) {
+    //             e.preventDefault();
+    //             e.stopPropagation();
+    //         }
+
+    //         // password double check
+    //         var conpass = document.querySelector('#confirm-password');
+    //         if(conpass.value !== document.querySelector('#password').value) {
+    //             var invalidFeedback = document.createElement("div");
+    //             invalidFeedback.textContent = "Passwords must match";
+    //             invalidFeedback.classList.add("invalid-feedback");
+    //             if (conpass.nextElementSibling !== null) {
+    //                 conpass.nextElementSibling.remove();
+    //                 conpass.classList.remove("is-invalid");
+    //             }
+    //             conpass.insertAdjacentHTML("afterend", invalidFeedback.outerHTML);
+    //             conpass.classList.add("is-invalid");
+                
+    //             e.preventDefault();
+    //             e.stopPropagation();
+    //         } else {
+    //             if (conpass.nextElementSibling !== null) {
+    //                 conpass.nextElementSibling.remove();
+    //                 conpass.classList.remove("is-invalid");
+    //             }
+    //         }
+    //         form.classList.add('was-validated');
+    //     });
+    // }
 </script>
+
 {% endblock %}

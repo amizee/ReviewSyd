@@ -8,38 +8,49 @@
             <div class="col-md-6 mx-auto">
                 <h3 class="pt-2 pb-2" style="margin-top: 40px">Account Settings</h3>
 
-                <form id="accountSettingsForm" action="{% url 'accountSettings' %}" method="post">
+                <!-- update -->
+                <form id="updateNameForm" method="post">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="firstName" class="form-label">First Name</label>
-                        <input type="text" class="form-control" id="firstName" name="first_name" placeholder="First Name" value="{{ current_user.first_name }}" readonly>
+                        <input type="text" class="form-control" id="firstName" name="first_name" placeholder="First Name" value="{{ current_user.first_name }}" required>
                     </div>
                     
                     <div class="mb-3">
                         <label for="surname" class="form-label">Surname</label>
-                        <input type="text" class="form-control" id="surname" name="last_name" placeholder="Surname" value="{{ current_user.last_name }}" readonly>
+                        <input type="text" class="form-control" id="surname" name="last_name" placeholder="Surname" value="{{ current_user.last_name }}" required>
+                        <div id="nameUpdateFeedback" class="mt-2"></div>
+                        <button type="submit" class="btn btn-primary mt-2">Update user name</button>
+                        
                     </div>
+                </form>
+
+
+                <form id="accountSettingsForm" action="{% url 'verify_current_password' %}" method="post">
+                    {% csrf_token %}
+
                     <div class="mb-3">
                         <br>
                         <h5>Reset Password</h5>
+
                         <div class="mb-3">
                             <label for="currentPassword" class="form-label">Current Password</label>
-                            <input type="password" class="form-control" id="currentPassword" name="current_password" placeholder="Current Password">
+                            <input type="password" class="form-control" id="currentPassword" name="current_password" placeholder="Current Password" required>
                             <div id="currentPasswordFeedback" class="invalid-feedback"></div>
                         </div>
                         <div class="mb-3">
                             <label for="newPassword" class="form-label">New Password</label>
-                            <input type="password" class="form-control" id="newPassword" name="new_password" placeholder="New Password">
+                            <input type="password" class="form-control" id="newPassword" name="new_password" placeholder="New Password" required>
                             <div id="newPasswordFeedback" class="invalid-feedback"></div>
                         </div>
                         <div class="mb-3">
                             <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
-                            <input type="password" class="form-control" id="confirmNewPassword" name="confirm_new_password" placeholder="Confirm New Password">
+                            <input type="password" class="form-control" id="confirmNewPassword" name="confirm_new_password" placeholder="Confirm New Password" required>
                             <div id="confirmNewPasswordFeedback" class="invalid-feedback"></div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
                     <div id="updateFeedback" class="mt-3"></div>
+                    <button type="submit" id="updateButton" class="btn btn-primary">Update user password</button>
                 </form>
             </div>
         </div>
@@ -49,91 +60,199 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Check current password via AJAX
-            $("#currentPassword").on("blur", function() {
-            let currentPassword = $(this).val();
 
+
+            const $updateButton = $("#updateButton");
+            const $currentPassword = $("#currentPassword");
+            const $newPassword = $("#newPassword");
+            const $confirmNewPassword = $("#confirmNewPassword");
+            const $updateFeedback = $("#updateFeedback");
+            const $currentPasswordFeedback = $("#currentPasswordFeedback");
+            const $newPasswordFeedback = $("#newPasswordFeedback");
+            const $confirmNewPasswordFeedback = $("#confirmNewPasswordFeedback");
+            
+            
+
+            
+
+            // Step 1: Initially disable the "Update" button
+            $updateButton.prop("disabled", true);
+
+            // Step 2: Enable the "Update" button when all fields are filled
+            function checkFields() {
+                const areFieldsFilled = $currentPassword.val() && $newPassword.val() && $confirmNewPassword.val();
+                $updateButton.prop("disabled", !areFieldsFilled);
+            }
+
+            $currentPassword.on("input", checkFields);
+            $newPassword.on("input", checkFields);
+            $confirmNewPassword.on("input", checkFields);
+            
+            // $updateFeedback.text(errorMessage).css("color", "red").show();
+
+            // Check current password via AJAX
+            function checkAndUpdatePassword() {
+
+                const currentPassword = $currentPassword.val();
+                const newPassword = $newPassword.val();
+                const confirmNewPassword = $confirmNewPassword.val();
+                
+                let isValid = true;
+
+                // 1. Check if current password is correct via AJAX
+                $.ajax({
+
+                    url: '{% url "verify_current_password" %}',  // Update URL
+                    method: 'POST',
+                    data: {
+                        'current_password': currentPassword,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (!response.is_correct) {
+                            $currentPassword.addClass('is-invalid');
+                            isValid = false;
+                        }
+
+                        // Continue with other validations only if the current password is correct
+                        if (isValid) {
+                            // 2. Check if new password is the same as current password
+                            if (newPassword === currentPassword) {
+                                $newPasswordFeedback.text("New password should be different from the current password").css("color", "red").show();
+                                $newPassword.addClass('is-invalid');
+                                isValid = false;
+                            }
+
+                            // 3. Check if confirm password matches the new password
+                            if (newPassword !== confirmNewPassword) {
+                                $confirmNewPasswordFeedback.text("Passwords do not match").css("color", "red").show();
+                                $confirmNewPassword.addClass('is-invalid');
+                                isValid = false;
+                            }
+
+                            if (isValid) {
+                                // All checks passed, update password
+                                updatePassword(newPassword);
+                            }
+                        }
+                    },
+                    error: function(xhr, status, error) {
+
+                    var responseJSON = {};
+                    try {
+                        responseJSON = JSON.parse(xhr.responseText);
+                    } catch (e) {
+                        console.error("Failed to parse response text as JSON:", xhr.responseText);
+                    }
+
+                    var errorMessage = responseJSON.message || "An error occurred. Please try again later.";
+                    $currentPasswordFeedback.text(errorMessage).css("color", "red").show();
+                }
+                });
+        }
+
+        $currentPassword.on("input", function() {
+
+            $currentPasswordFeedback.hide();
+            $currentPassword.removeClass('is-invalid');
+
+            checkFields();
+        });
+
+        $newPassword.on("input", function() {
+
+            $newPasswordFeedback.hide();
+            $newPassword.removeClass('is-invalid');
+
+            checkFields();
+        });
+
+        $confirmNewPassword.on("input", function() {
+
+            $confirmNewPasswordFeedback.hide();
+            $confirmNewPassword.removeClass('is-invalid');
+
+            checkFields();
+        });
+        
+        
+
+        function updatePassword(newPassword) {
             $.ajax({
-                url: '{% url "accountSettings" %}',
+                url: '{% url "update_password" %}',  // Update URL
                 method: 'POST',
                 data: {
-                    'current_password': currentPassword,
-                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    'new_password': newPassword,
+                    'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
                 },
                 dataType: 'json',
                 success: function(response) {
-                    if(!response.is_correct) {
-                        $("#currentPasswordFeedback").text("Incorrect current password").show();
-                        $("#currentPassword").addClass('is-invalid');
+                    if (response.success) {
+                        $updateFeedback.text("Your password is updated").css("color", "green").show();
                     } else {
-                        $("#currentPasswordFeedback").hide();
-                        $("#currentPassword").removeClass('is-invalid');
+                        $updateFeedback.text("Failed to update password").css("color", "red").show();
                     }
+                },
+                error: function() {
+                    $updateFeedback.text("An error occurred").css("color", "red").show();
+                }
+            });
+        }
+
+        $updateButton.on("click", function(e) {
+            e.preventDefault();
+            checkAndUpdatePassword();
+        });
+        
+
+
+        // name update part
+        $("#updateNameForm").on("submit", function(e) {
+            e.preventDefault();
+
+            let firstName = $("#firstName").val();
+            let lastName = $("#surname").val();
+
+            $.ajax({
+                url: '{% url "updateName" %}',  
+                method: 'POST',
+                data: {
+                    'first_name': firstName,
+                    'last_name': lastName,
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if(response.success) {
+                        $("#nameUpdateFeedback").text("User name is successfully updated").css("color", "green");
+                        $(".nav-name").text(firstName + " ");
+                    } else {
+                        $("#nameUpdateFeedback").text("Failed to update name").css("color", "red");
+                    }
+                },
+                error: function() {
+                    $("#nameUpdateFeedback").text("An error occurred").css("color", "red");
                 }
             });
         });
 
-            // Check if new password is the same as current password
-            $("#newPassword").on("blur", function() {
-                let currentPassword = $("#currentPassword").val();
-                let newPassword = $(this).val();
-                
-                if(newPassword == currentPassword) {
-                    $("#newPasswordFeedback").text("New password should be different from the current password").show();
-                    $("#newPassword").addClass('is-invalid');
-                } else {
-                    $("#newPasswordFeedback").hide();
-                    $("#newPassword").removeClass('is-invalid');
-                }
-            });
-
-            // Check if confirm password matches the new password
-            $("#confirmNewPassword").on("blur", function() {
-                let newPassword = $("#newPassword").val();
-                let confirmNewPassword = $(this).val();
-                
-                if(newPassword != confirmNewPassword) {
-                    $("#confirmNewPasswordFeedback").text("Passwords do not match").show();
-                    $("#confirmNewPassword").addClass('is-invalid');
-                } else {
-                    $("#confirmNewPasswordFeedback").hide();
-                    $("#confirmNewPassword").removeClass('is-invalid');
-                }
-            });
-
-            // On form submit
-            $("#accountSettingsForm").on("submit", function(e) {
-                e.preventDefault();
-
-                let currentPassword = $("#currentPassword").val();
-                let newPassword = $("#newPassword").val();
-                let confirmNewPassword = $("#confirmNewPassword").val();
-
-                if (!currentPassword || !newPassword || !confirmNewPassword) {
-                    $("#updateFeedback").text("Passwords cannot be empty").css("color", "red");
-                    return;
-                }
-
-                if(newPassword === confirmNewPassword) {
-                    $.ajax({
-                        url: '{% url "accountSettings" %}',
-                        method: 'POST',
-                        data: $(this).serialize(),
-                        dataType: 'json',
-                        success: function(response) {
-                            if(response.success) {
-                                $("#updateFeedback").text("Profile successfully updated").css("color", "green");
-                            }
-                        },
-                        error: function(response) {
-                            alert(response.responseJSON.message);
-                        }
-                    });
-                } else {
-                    $("#updateFeedback").text("Passwords do not match").css("color", "red");
-                }
-            });
+        $("#firstName, #surname").on("input", function() {
+            $("#nameUpdateFeedback").text("");
         });
+        
+
+    });
+
+
+
+
+
     </script>
 
 {% endblock %}
+
+
+
+
+

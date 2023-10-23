@@ -20,6 +20,10 @@ from django.db.models import Q
 from django.db.models import Avg
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import random
+from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth import update_session_auth_hash
+from django.views.decorators.csrf import ensure_csrf_cookie
+
 
 
 
@@ -284,6 +288,9 @@ def repReview(request, loc):
     ret=[{'pk':primKey}]
     return JsonResponse(ret,safe=False)
 
+
+
+
 @login_required
 def accountSettings(request):
     if request.method == 'POST':
@@ -296,9 +303,7 @@ def accountSettings(request):
             else:
                 return JsonResponse({"is_correct": False, "message": "Incorrect current password."}, status=400)
 
-        # Processing the full form submission:
-        first_name = request.POST['first_name']
-        last_name = request.POST['last_name']
+        # Processing the full form submission for password change
         current_password = request.POST['current_password']
         new_password = request.POST['new_password']
         confirm_new_password = request.POST['confirm_new_password']
@@ -319,15 +324,66 @@ def accountSettings(request):
 
         # If passwords match, then save the new password
         user.set_password(new_password)
-
-        # Update first name and last name
-        user.first_name = first_name
-        user.last_name = last_name
         user.save()
 
-        return JsonResponse({"success": True, "message": "Account settings updated successfully!"})
+        # Update session hash so the user doesn't get logged out after changing password
+        update_session_auth_hash(request, user)
+
+        return JsonResponse({"success": True, "message": "Password updated successfully!"})
 
     return render(request, "accountSettings.html", {"current_user": request.user})
+
+
+@login_required
+@ensure_csrf_cookie
+def update_password(request):
+    if request.method == 'POST':
+        new_password = request.POST.get('new_password')
+
+        user = request.user
+        
+        user.set_password(new_password)
+        user.save()
+        
+        update_session_auth_hash(request, user)
+
+        return JsonResponse({"success": True, "message": "Password updated successfully!"})
+    return JsonResponse({"message": "Invalid request."}, status=400)
+
+
+@login_required
+@ensure_csrf_cookie
+@csrf_protect
+def verify_current_password(request):
+    # print(request.POST)
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password')
+        user = request.user
+        if user.check_password(current_password):
+            return JsonResponse({"is_correct": True})
+        else:
+            return JsonResponse({"is_correct": False, "message": "Incorrect current password."}, status=400)
+    return JsonResponse({"message": "Invalid request."}, status=400)
+
+
+
+@login_required
+@csrf_protect
+def update_name(request):
+    if request.method == 'POST':
+        user = request.user
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+
+        if first_name:
+            user.first_name = first_name
+        if last_name:
+            user.last_name = last_name
+
+        user.save()
+        return JsonResponse({"success": True, "message": "Name updated successfully!"})
+
+    return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
 
 
 def login_view(request):

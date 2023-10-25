@@ -293,45 +293,19 @@ def repReview(request, loc):
 
 @login_required
 def accountSettings(request):
-    if request.method == 'POST':
-        # Check if only verifying the current password
-        if 'current_password' in request.POST and 'new_password' not in request.POST:
-            current_password = request.POST['current_password']
-            user = request.user
-            if user.check_password(current_password):
-                return JsonResponse({"is_correct": True})
-            else:
-                return JsonResponse({"is_correct": False, "message": "Incorrect current password."}, status=400)
+    # Fetching data related to the current user
+    user_tutors = Tutor.objects.filter(user=request.user)
+    user_uos_comments = UoSComment.objects.filter(user=request.user)
+    user_location_reviews = LocationReviews.objects.filter(user=request.user)
 
-        # Processing the full form submission for password change
-        current_password = request.POST['current_password']
-        new_password = request.POST['new_password']
-        confirm_new_password = request.POST['confirm_new_password']
+    context = {
+        "current_user": request.user,
+        "user_tutors": user_tutors,
+        "user_uos_comments": user_uos_comments,
+        "user_location_reviews": user_location_reviews
+    }
 
-        # Get the current user
-        user = request.user
-        
-        if not current_password or not new_password or not confirm_new_password:
-            return JsonResponse({"success": False, "message": "Passwords cannot be empty."}, status=400)
-
-        # Validate the current password
-        if not user.check_password(current_password):
-            return JsonResponse({"success": False, "message": "Incorrect current password."}, status=400)
-
-        # Check if the new password matches the confirm password
-        if new_password != confirm_new_password:
-            return JsonResponse({"success": False, "message": "New password and confirm password do not match."}, status=400)
-
-        # If passwords match, then save the new password
-        user.set_password(new_password)
-        user.save()
-
-        # Update session hash so the user doesn't get logged out after changing password
-        update_session_auth_hash(request, user)
-
-        return JsonResponse({"success": True, "message": "Password updated successfully!"})
-
-    return render(request, "accountSettings.html", {"current_user": request.user})
+    return render(request, "accountSettings.html", context)
 
 
 @login_required
@@ -355,7 +329,7 @@ def update_password(request):
 @ensure_csrf_cookie
 @csrf_protect
 def verify_current_password(request):
-    # print(request.POST)
+
     if request.method == 'POST':
         current_password = request.POST.get('current_password')
         user = request.user
@@ -409,17 +383,7 @@ def signup(request):
         first_name = request.POST['first_name']
         surname = request.POST['surname']
         email = request.POST['email'] + "@uni.sydney.edu.au"
-        
-        # if User.objects.filter(username=email).exists():
-        #     # This email (username) is already taken
-        #     messages.error(request, 'The email address is already in use.')
-        #     return redirect('signup')  # Redirect back to the signup page
-        
-        # # Validate verification code
-        # code_entered = request.POST.get('verify')
-        # if verification_codes.get(email) != code_entered:
-        #     messages.error(request, 'Invalid verify code.')
-        #     return redirect('signup')  # Redirect back to the signup page
+
 
         password = request.POST['password']
 
@@ -476,10 +440,6 @@ def check_verification_code(request):
         else:
             return JsonResponse({"success": False, "error": "Invalid verification code."})
     return JsonResponse({"success": False, "error": "Invalid request."})
-
-@login_required
-def signupCompletion(request):
-    return render(request, "signupCompletion.html")
 
 @login_required
 def UoSList(request):
@@ -581,7 +541,7 @@ def reset_password(request):
     reset_token = PasswordResetToken.objects.filter(token=token, expiration_date__gte=timezone.now()).first()
     if not reset_token:
         print(f"Invalid or expired token: {token}")
-        return render(request, 'invalid_or_expired_token.html')
+        return render(request, 'reset_password.html')
 
     if request.method == "POST":
         form = PasswordResetForm(request.POST)
@@ -597,6 +557,7 @@ def reset_password(request):
                 return JsonResponse({'success': True, 'message': 'Password reset successfully.'})
             else:
                 print("New password and confirm password do not match.")
+                print("Form errors:", form.errors)
                 return JsonResponse({'success': False, 'message': 'Passwords do not match.'})
         else:
             print(f"Form errors: {form.errors}")
@@ -604,3 +565,4 @@ def reset_password(request):
     else:
         form = PasswordResetForm()
         return render(request, 'reset_password.html', {'form': form})
+    

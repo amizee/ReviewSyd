@@ -19,7 +19,7 @@ from django.core import mail
 from django import forms
 import random
 import json
-import mock
+# import mock
 
 
 class FeedbackViewTest(TestCase):
@@ -29,6 +29,18 @@ class FeedbackViewTest(TestCase):
 
         # Check that the correct template was used
         self.assertTemplateUsed(response, 'feedback.html')
+
+        # Check that the response status code is 200 (OK)
+        self.assertEqual(response.status_code, 200)
+
+
+class PrivacyViewTest(TestCase):
+    def test_feedback_view_renders_feedback_template(self):
+        # Issue a GET request using the Django test client
+        response = self.client.get(reverse('privacy'))
+
+        # Check that the correct template was used
+        self.assertTemplateUsed(response, 'privacy.html')
 
         # Check that the response status code is 200 (OK)
         self.assertEqual(response.status_code, 200)

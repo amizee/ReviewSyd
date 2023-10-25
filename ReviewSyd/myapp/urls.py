@@ -25,7 +25,6 @@ urlpatterns=[
     path("accountSettings/", views.accountSettings, name="accountSettings"), 
     path('login/', views.login_view, name='login_view'),
     path("signup/", views.signup, name="signup"), 
-    path("signupCompletion/", views.signupCompletion, name="signupCompletion"), 
     path("UoSList/", views.UoSList, name="UoSList"),
     path("UoSList/search/", views.UoSSearch, name="UoS_search"),
     path("UoS/<str:Uos>/", views.UoStudy, name="UoS"),  

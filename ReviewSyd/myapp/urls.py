@@ -40,6 +40,7 @@ urlpatterns=[
     path('update_name/', views.update_name, name='updateName'),
     path('verify_current_password/', views.verify_current_password, name='verify_current_password'),
     path('update_password/', views.update_password, name='update_password'),
+
 ]
 
 if settings.DEBUG:

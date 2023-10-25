@@ -442,10 +442,6 @@ def check_verification_code(request):
     return JsonResponse({"success": False, "error": "Invalid request."})
 
 @login_required
-def signupCompletion(request):
-    return render(request, "signupCompletion.html")
-
-@login_required
 def UoSList(request):
     results=UoS.objects.all()
     return render(request, "UoSList.html", {"UoStudies": results, "navbar": "uos"})
@@ -545,7 +541,7 @@ def reset_password(request):
     reset_token = PasswordResetToken.objects.filter(token=token, expiration_date__gte=timezone.now()).first()
     if not reset_token:
         print(f"Invalid or expired token: {token}")
-        return render(request, 'invalid_or_expired_token.html')
+        return render(request, 'reset_password.html')
 
     if request.method == "POST":
         form = PasswordResetForm(request.POST)
@@ -561,6 +557,7 @@ def reset_password(request):
                 return JsonResponse({'success': True, 'message': 'Password reset successfully.'})
             else:
                 print("New password and confirm password do not match.")
+                print("Form errors:", form.errors)
                 return JsonResponse({'success': False, 'message': 'Passwords do not match.'})
         else:
             print(f"Form errors: {form.errors}")
@@ -568,3 +565,4 @@ def reset_password(request):
     else:
         form = PasswordResetForm()
         return render(request, 'reset_password.html', {'form': form})
+    

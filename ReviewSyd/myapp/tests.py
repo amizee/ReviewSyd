@@ -21,6 +21,74 @@ import random
 import json
 # import mock
 
+class HomePageTest(TestCase):
+    def setUp(self):
+        # Login user
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.client.login(username='testuser', password='testpassword')
+
+        self.loc1 = Locations.objects.create(name="Fisher Library")
+
+    def test_map_redirect(self):
+        url = reverse('location list') 
+        response = self.client.get(url)
+
+        # Check if the response contains the anchor link
+        self.assertContains(response, 'href="{0}"'.format(reverse('locationsMap')))
+
+        # Extract the URL from the anchor link's `href` attribute.
+        anchor_url = response.content.decode() 
+
+        # Check if the anchor link redirects to the correct URL.
+        self.assertIn(reverse('locationsMap'), anchor_url) 
+
+    def test_location_redirect(self):
+        url = reverse('location list')
+        response = self.client.get(url)
+
+        # Check that the response does not contain a link to the location page since it is misspelt
+        expected_url = reverse('location', args=["Fisher Librar"])
+        self.assertNotContains(response, 'href="{0}"'.format(expected_url))
+
+        # Now the spelling is correct
+        expected_url = reverse('location', args=["Fisher Library"])
+        self.assertContains(response, 'href="{0}"'.format(expected_url))
+
+        # Simulate clicking the link
+        response = self.client.get(expected_url)
+
+        # Check if the response status code is 200, indicating a successful redirection
+        self.assertEqual(response.status_code, 200)
+        
+
+class LocationsMapViewTest(TestCase):
+    def test_map_view_renders_map_template(self):
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+
+        # Log in the test user
+        self.client.login(username='testuser', password='testpassword')
+
+        # Issue a GET request using the Django test client
+        response = self.client.get(reverse('locationsMap'), {'navbar': 'locationsMap'})
+
+        # Check that the response status code is 200 (OK)
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the correct template was used
+        self.assertTemplateUsed(response, 'locationsMap.html')
+
+        
+class HelpViewTest(TestCase):
+    def test_help_view_renders_help_template(self):
+        # Issue a GET request using the Django test client
+        response = self.client.get(reverse('help'))
+        
+        # Check that the response status code is 200 (OK)
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the correct template was used
+        self.assertTemplateUsed(response, 'help.html')
+
 
 class FeedbackViewTest(TestCase):
     def test_feedback_view_renders_feedback_template(self):

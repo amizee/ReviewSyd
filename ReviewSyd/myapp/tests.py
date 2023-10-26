@@ -579,6 +579,9 @@ class PasswordResetTest(TestCase):
 
 
 class UoSListTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.client.login(username='testuser', password='testpassword')
     def test_uos_list_view_renders_uos_list_template(self):
         # Issue a GET request using the Django test client
         response = self.client.get(reverse('UoSList'))
@@ -590,9 +593,32 @@ class UoSListTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-clas UoSCreateTest(TestCase):
+class UoSTest(TestCase):
     def setUp(self):
-        UoS.objects.create(code="1232", name="testunit")
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.client.login(username='testuser', password='testpassword')
+        self.testuos = UoS.objects.create(code="1232", name="testunit")
+        self.testuosC = UoSComment.objects.create(user=self.user, comment="test com", uos=self.testuos)
     def test_uos_values(self):
         uos=UoS.objects.get(name="testunit")
         self.assertEqual(uos.code, "1232")
+    def test_uos_site(self):
+        url = reverse('UoSList')
+        response = self.client.get(url)
+
+        # Check that the response does not contain a link to the location page since it is misspelt
+        expected_url = reverse('UoS', args=["testunt"])
+        self.assertNotContains(response, 'href="{0}"'.format(expected_url))
+
+        # Now the spelling is correct
+        expected_url = reverse('UoS', args=["testunit"])
+        self.assertContains(response, 'href="{0}"'.format(expected_url))
+
+        # Simulate clicking the link
+        response = self.client.get(expected_url)
+        self.assertTemplateUsed(response, 'UoS.html')
+        # Check if the response status code is 200, indicating a successful redirection
+        self.assertEqual(response.status_code, 200)
+    def test_uos_comment(self):
+        uosC=UoSComment.objects.get(user=self.user)
+        self.assertEqual(uosC.comment, "test com")

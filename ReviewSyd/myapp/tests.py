@@ -588,3 +588,11 @@ class UoSListTest(TestCase):
 
         # Check that the response status code is 200 (OK)
         self.assertEqual(response.status_code, 200)
+
+
+clas UoSCreateTest(TestCase):
+    def setUp(self):
+        UoS.objects.create(code="1232", name="testunit")
+    def test_uos_values(self):
+        uos=UoS.objects.get(name="testunit")
+        self.assertEqual(uos.code, "1232")

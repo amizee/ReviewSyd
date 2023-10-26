@@ -576,3 +576,15 @@ class PasswordResetTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'reset_password.html')
         self.assertIsInstance(response.context['form'], forms.Form)
+
+
+class UoSListTest(TestCase):
+    def test_uos_list_view_renders_uos_list_template(self):
+        # Issue a GET request using the Django test client
+        response = self.client.get(reverse('UoSList'))
+
+        # Check that the correct template was used
+        self.assertTemplateUsed(response, 'UoSList.html')
+
+        # Check that the response status code is 200 (OK)
+        self.assertEqual(response.status_code, 200)

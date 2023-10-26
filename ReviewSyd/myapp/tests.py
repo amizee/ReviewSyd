@@ -114,6 +114,18 @@ class PrivacyViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
+class TermsAndConditionsTest(TestCase):
+    def test_terms_and_conditions_view_renders_ts_template(self):
+        # Issue a GET request using the Django test client
+        response = self.client.get(reverse('terms and conditions'))
+
+        # Check that the correct template was used
+        self.assertTemplateUsed(response, 'ts.html')
+
+        # Check that the response status code is 200 (OK)
+        self.assertEqual(response.status_code, 200)
+
+
 class LogoutViewTest(TestCase):
     def setUp(self):
         # Create an instance of RequestFactory to build request objects

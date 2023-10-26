@@ -185,7 +185,12 @@
             type: 'GET',
             data: {'val':1, 'pk':pk},
             success:(data)=>{
-                unrepb.append('<span id="' + data[0].pk + '"></span>')
+                if(data[0].pk==0){
+                    location.reload()
+                }
+                else{
+                    unrepb.append('<span id="' + data[0].pk + '"></span>')
+                }
             },
             error: (error)=>{console.log(error)},
         })

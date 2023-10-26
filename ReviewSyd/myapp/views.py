@@ -292,6 +292,10 @@ def repReview(request, loc):
         Review.report.remove(request.user)
 
     count= Review.report.count()
+    maxRep=1
+    if(count>=maxRep):
+        Review.delete()
+    primKey=0
     ret=[{'pk':primKey}]
     return JsonResponse(ret,safe=False)
 
@@ -514,6 +518,7 @@ def repUoS(request, Uos):
         Comment.report.remove(request.user)
 
     count= Comment.report.count()
+      
     ret=[{'pk':primKey}]
     return JsonResponse(ret,safe=False)
 

@@ -1,5 +1,5 @@
 from venv import logger
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, Http404
 from django.shortcuts import render, HttpResponse, redirect
 from .models import *
 from django.core.mail import send_mail, BadHeaderError
@@ -185,15 +185,22 @@ def faq(request):
 
 @login_required
 def location(request, loc):
-    location=Locations.objects.get(name=loc)
+    try:
+        location=Locations.objects.get(name=loc)
+    except Locations.DoesNotExist:
+        raise Http404("Location does not exist")
     return render(request, "location.html", {"location":location})
+    
 
 @login_required
 def locReviews(request, loc):
-    location=Locations.objects.get(name=loc)
-    curr=request.user
-    pRev=location.location_reviews.filter(user=curr)
-    oRev=location.location_reviews.filter(~Q(user=curr))
+    try:
+        location=Locations.objects.get(name=loc)
+        curr=request.user
+        pRev=location.location_reviews.filter(user=curr)
+        oRev=location.location_reviews.filter(~Q(user=curr))
+    except Locations.DoesNotExist:
+        raise Http404("Location does not exist")
     return render(request, "locReviews.html", {"location":location, "pRev":pRev, "oRev":oRev})
 
 @login_required
@@ -455,10 +462,13 @@ def UoSSearch(request):
 
 @login_required
 def UoStudy(request, Uos):
-    UoStudy=UoS.objects.get(name=Uos)
-    curr=request.user
-    pCom=UoStudy.uos_comment.filter(user=curr)
-    oCom=UoStudy.uos_comment.filter(~Q(user=curr))
+    try:
+        UoStudy=UoS.objects.get(name=Uos)
+        curr=request.user
+        pCom=UoStudy.uos_comment.filter(user=curr)
+        oCom=UoStudy.uos_comment.filter(~Q(user=curr))
+    except UoS.DoesNotExist:
+        raise Http404("Unit of study does not exist")
     return render(request, "UoS.html", {"UoS":UoStudy, "pCom":pCom, "oCom":oCom})
 
 @login_required

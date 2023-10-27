@@ -52,6 +52,7 @@ class reports(models.Model):
 class UoS(models.Model):
     code = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
 
 class UoSComment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)

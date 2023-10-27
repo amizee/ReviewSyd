@@ -167,6 +167,9 @@ def remove_tutor(request, tutor_id):
 
 
 
+
+
+
 @login_required
 def locationList(request):
     results=Locations.objects.all()

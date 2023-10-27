@@ -52,6 +52,7 @@ class HomePageTest(TestCase):
 
         # Now the spelling is correct
         expected_url = reverse('location', args=["Fisher Library"])
+        print(response.content)
         self.assertContains(response, 'href="{0}"'.format(expected_url))
 
         # Simulate clicking the link
@@ -597,18 +598,26 @@ class UoSTest(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='testuser', password='testpassword')
         self.client.login(username='testuser', password='testpassword')
-        testuos = UoS.objects.create(code="1232", name="testunit")
-        testuosC = UoSComment.objects.create(user=self.user, comment="test com", uos=testuos)
+        self.testuos = UoS.objects.create(code="1232", name="testunit")
+        self.testuosC = UoSComment.objects.create(user=self.user, comment="test com", uos=self.testuos)
     def test_uos_values(self):
         uos=UoS.objects.get(name="testunit")
         self.assertEqual(uos.code, "1232")
     def test_uos_site(self):
-        expected_url=reverse('UoS', args=["testunit"])
-        print(expected_url)
-        response = self.client.get('/UoS/testunit/')
-        print(response)
-        self.assertContains(response, 'href="{0}"'.format(expected_url))
-        self.assertTemplateUsed(response, 'UoS.html')
+        url = reverse('UoSList')
+        response = self.client.get(url)
+
+        # Check that the response does not contain a link to the location page since it is misspelt
+        expected_url = reverse('UoS', args=["tstunt"])
+        self.assertNotContains(response, expected_url)
+        # Now the spelling is correct
+        expected_url = reverse('UoS', args=["testunit"])
+
+        self.assertContains(response, expected_url)
+
+        # Simulate clicking the link
+        response = self.client.get(expected_url)
+
         # Check if the response status code is 200, indicating a successful redirection
         self.assertEqual(response.status_code, 200)
     def test_uos_comment(self):

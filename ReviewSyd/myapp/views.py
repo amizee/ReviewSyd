@@ -298,6 +298,17 @@ def repReview(request, loc):
     maxRep=1
     if(count>=maxRep):
         Review.delete()
+        if location.location_reviews.all().count()==0:
+            location.avgAmen=0
+            location.avgClean=0
+            location.avgNoise=0
+            location.avgOverall=0
+        else:
+            location.avgNoise = LocationReviews.objects.filter(location=location).aggregate(Avg('noisinessRating'))['noisinessRating__avg']
+            location.avgAmen = LocationReviews.objects.filter(location=location).aggregate(Avg('amenitiesRating'))['amenitiesRating__avg']
+            location.avgClean = LocationReviews.objects.filter(location=location).aggregate(Avg('cleanlinessRating'))['cleanlinessRating__avg']
+            location.avgOverall = (location.avgNoise + location.avgAmen + location.avgClean)/3
+        location.save(update_fields=['avgNoise', 'avgClean', 'avgAmen', 'avgOverall'])
     primKey=0
     ret=[{'pk':primKey}]
     return JsonResponse(ret,safe=False)

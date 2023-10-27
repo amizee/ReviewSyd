@@ -519,9 +519,12 @@ def repUoS(request, Uos):
         Comment.report.add(r.user)
     else:
         Comment.report.remove(request.user)
-
+    
     count= Comment.report.count()
-      
+    maxRep=1
+    if(count>=maxRep):
+        Comment.delete()
+    primKey=0  
     ret=[{'pk':primKey}]
     return JsonResponse(ret,safe=False)
 

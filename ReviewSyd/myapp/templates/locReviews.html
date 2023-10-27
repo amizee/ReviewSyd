@@ -26,6 +26,7 @@
 
 <div class="container px-5 py-5">
     <div id="loc" class="font-weight-bold h1 pb-3 text-center">{{location.name}}</div>
+    <!--Average ratings-->
     <div class="row text-center pb-5">
         <div class="col-3 mx-auto">
             <div class="card" style="border: 2px solid #E74726;">
@@ -64,8 +65,9 @@
             </div>
         </div>
     </div>
-
+    <!--Reviews-->
     <div class="row pb-3" id="reviews-container">
+        <!--Reviews by the user-->
         {% for review in pRev %}
             <div class="col-md-12" style="margin-bottom: 10px;">
                 <div class="card">
@@ -199,6 +201,7 @@
                 </div>
             </div>
         {% endfor %}
+        <!--Reviews not from user-->
         {% for review in oRev %}
             <div class="col-md-12" style="margin-bottom: 10px;">
                 <div class="card">
@@ -303,6 +306,7 @@
                                     </div>
                                     <div class="col-7"></div>
                                     <div class="col-1 d-flex justify-content-end">
+                                        <!--Checks if user has likes the review-->
                                         {% if user in review.like.all  %}
                                             <button id="liked" class="card mx-left h-100 border-0">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-hand-thumbs-up h-50 w-50 mx-auto liked" viewBox="0 0 16 16">
@@ -378,7 +382,7 @@
 <script>
     $(document).ready(()=>{
         "use strict"
-        $('#reviewForm').submit((e)=>{
+        $('#reviewForm').submit((e)=>{//validates the form and ajax GET request to store data
             var form=$('#reviewForm')
             if(!form[0].checkValidity()){
                 e.preventDefault()
@@ -442,7 +446,7 @@
             })
         }
     })
-    unliked=(lb)=>{
+    unliked=(lb)=>{//unlikes the button and adds the click event to make the button liked
         var pk=$(lb).find('p').find('span').attr('id');
         var likeSpan = lb.find('p').find('span');
         var svgElement = lb.find('svg');
@@ -461,7 +465,7 @@
             liked($(lb))
         })
     }
-    liked=(lb)=>{
+    liked=(lb)=>{//likes the button and adds the click event to make the button unliked
         var pk=$(lb).find('p').find('span').attr('id');
         var likeSpan = lb.find('p').find('span');
         var svgElement = lb.find('svg');
@@ -480,7 +484,7 @@
             unliked($(lb))
         })
     }
-    unreport=(repb)=>{
+    unreport=(repb)=>{//removes the reported icon and ajax GET to decrease the rep value of the review
         var pk=$(repb).find('span').attr('id');
         repb.empty()
         repb.removeAttr('id')
@@ -500,7 +504,7 @@
             report($(repb))
         })
     }
-    report=(unrepb)=>{
+    report=(unrepb)=>{//reports the review and ajax request to update rep value
         var pk=$(unrepb).find('span').attr('id');
         unrepb.empty()
         unrepb.removeAttr('id')
@@ -525,7 +529,7 @@
             unreport($(unrepb))
         })
     }
-    del=(btn)=>{
+    del=(btn)=>{//deletes the review and reloads the page to remove the review
         var pk=$(btn).find('span').attr('id');
         $.ajax({
             url: 'del/',

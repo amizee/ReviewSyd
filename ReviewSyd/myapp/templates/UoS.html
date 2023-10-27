@@ -25,6 +25,7 @@
         Back
     </a>
     <div class="row text-center pb-3" id="comment-container">
+        <!--comment by the user-->
         {% for com in pCom %}
             <div class="col-md-10 mx-auto mb-2">
                 <div class="card">
@@ -50,6 +51,7 @@
                 </div>
             </div>
         {% endfor %}
+        <!--comment not by the user-->
         {% for com in oCom %}
             <div class="col-md-10 mx-auto mb-2">
                 <div class="card">
@@ -86,6 +88,7 @@
             </div>
         {% endfor %}
     </div>
+    <!--add comment form-->
     <form id="commentForm" class="needs-validation mx-auto w-50 card text-center px-3" novalidate>
         <div class="py-2">
             <label for="Comment" class="form-label">Comment</label>
@@ -102,7 +105,7 @@
 <script>
     $(document).ready(()=>{
         "use strict"
-        $('#commentForm').submit((e)=>{
+        $('#commentForm').submit((e)=>{//validates the form and ajax request to add the data to the database
             var form=$('#commentForm')
             if(!form[0].checkValidity()){
                 e.preventDefault()
@@ -147,7 +150,7 @@
             })
         }
     })
-    unreport=(repb)=>{
+    unreport=(repb)=>{//unreports the review to reduce the reports and change report icon
         var pk=$(repb).find('span').attr('id');
         repb.empty()
         repb.removeAttr('id')
@@ -167,7 +170,7 @@
             report($(repb))
         })
     }
-    report=(unrepb)=>{
+    report=(unrepb)=>{//reports the review to increase the reports and change report icon
         var pk=$(unrepb).find('span').attr('id');
         unrepb.empty()
         unrepb.removeAttr('id')
@@ -192,7 +195,7 @@
             unreport($(unrepb))
         })
     }
-    del=(btn)=>{
+    del=(btn)=>{//deletes review and reloads the page to remove it
         var pk=$(btn).find('span').attr('id');
         $.ajax({
             url: 'del/',

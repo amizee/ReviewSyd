@@ -32,9 +32,11 @@
 
 <div class="container mt-5">
     <h1 class="font-weight-bold text-center mb-4">Unit of Study List</h1>
+    <!--Search list-->
     <div class="input-group mb-3 w-50 mx-auto">
         <input type="search" id="search" class="form-control" placeholder="Search for a unit of study" aria-label="Search" aria-describedby="search-addon">
     </div>
+    <!--Creates list with all the Unit of Studies-->
     <div id="UoS" class="row row-cols-1 g-4" style="max-height: 500px; overflow-y: auto; margin-top: 15px;"> 
         {% for UoS in UoStudies %}
             <div class="col">
@@ -58,7 +60,7 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
-        $('.view-description').on('click', function(e){
+        $('.view-description').on('click', function(e){//hides and views the UoS description on click
             e.preventDefault();
             var description = $(this).siblings('.description');
             if(description.is(':visible')){
@@ -74,20 +76,20 @@
 
 <script>
     $(document).ready(()=>{
-        $('#search').change((e)=>{
+        $('#search').change((e)=>{//Changes the listed UoS based on the search change
             var search= $('#search').val()
-            $.ajax({
+            $.ajax({//ajax request to get the UoS from the database that match the search
                 url: '/UoSList/search/',
                 type: 'GET',
                 data: {'search':search },
                 success: (data)=>{
                     var res=$('#UoS')
                     res.empty()
-                    if(data.length===0){
+                    if(data.length===0){//no matching UoS, no results is shown
                         res.append('<p>No results found</p>')
                     }
                     else{
-                        Array.prototype.slice.call(data).forEach((UoS)=>{
+                        Array.prototype.slice.call(data).forEach((UoS)=>{//for each UoS found, creates a card with their data
                                 res.append("<div class='col'> <div class='card h-100 mx-auto' style='width: 40rem;''> <div class='card-body'><h5 class='card-title'>"+ UoS.code+" :  "+UoS.name+" </h5><a href='#'' class='view-description' style='color: grey;''>view description</a>&nbsp;&nbsp;<p class='description' style='display:none;''>"+ UoS.description+" </p><a href='\/UoS\/"+UoS.name+"\/' >  View Comments</a> </div></div></div>")
                         })
                         $('.view-description').on('click', function(e){

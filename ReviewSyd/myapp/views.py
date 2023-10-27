@@ -28,7 +28,6 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 
 #python(3) manage.py runserver
-# Create your views here.
 
 @login_required
 def locationsMap(request):
@@ -100,7 +99,7 @@ def findTutor(request):
     if not page:
         page = 1
     else:
-        try:
+        try:#if invalid value, like not an int, makes the page 1
             page = int(page)
         except ValueError:
             page = 1
@@ -164,12 +163,6 @@ def remove_tutor(request, tutor_id):
     
     return redirect('findTutor')  
 
-
-
-
-
-
-
 @login_required
 def locationList(request):
     results=Locations.objects.all()
@@ -178,6 +171,7 @@ def locationList(request):
 @login_required
 def locSearch(request):
     search=request.GET.get('search','')
+    #filters Locations using the user input, then returns the names of the locations
     results=Locations.objects.filter(name__icontains=search)
     res=[{'name':result.name} for result in results]
     return JsonResponse(res, safe=False)
@@ -188,6 +182,7 @@ def faq(request):
 
 @login_required
 def location(request, loc):
+    #if invalid location address, raise page not found error
     try:
         location=Locations.objects.get(name=loc)
     except Locations.DoesNotExist:
@@ -197,11 +192,11 @@ def location(request, loc):
 
 @login_required
 def locReviews(request, loc):
-    try:
+    try:#if invalid location address, raise page not found error
         location=Locations.objects.get(name=loc)
         curr=request.user
-        pRev=location.location_reviews.filter(user=curr)
-        oRev=location.location_reviews.filter(~Q(user=curr))
+        pRev=location.location_reviews.filter(user=curr)#user reviews
+        oRev=location.location_reviews.filter(~Q(user=curr))#not user reviews
     except Locations.DoesNotExist:
         raise Http404("Location does not exist")
     return render(request, "locReviews.html", {"location":location, "pRev":pRev, "oRev":oRev})
@@ -214,21 +209,23 @@ def subReview(request, loc):
     rev= request.GET.get('rev')
     locID=Locations.objects.get(name=loc)
     curr=request.user
+    #creates review using the user inputs and assigns it to the current location
     review=LocationReviews(writtenReview = rev, cleanlinessRating = clean, amenitiesRating = amen, noisinessRating = noise, location = locID, user=curr)
     review.save()
+    #if no reviews, sets the average ratings to this review's ratings
     if locID.location_reviews.all().count()==0:
         locID.avgAmen=amen
         locID.avgClean=clean
         locID.avgNoise=noise
         locID.avgOverall=(amen+clean+noise)/3
-    else:
+    else:#averages the current average ratings with this review's ratings
         locID.avgNoise = LocationReviews.objects.filter(location=locID).aggregate(Avg('noisinessRating'))['noisinessRating__avg']
         locID.avgAmen = LocationReviews.objects.filter(location=locID).aggregate(Avg('amenitiesRating'))['amenitiesRating__avg']
         locID.avgClean = LocationReviews.objects.filter(location=locID).aggregate(Avg('cleanlinessRating'))['cleanlinessRating__avg']
         locID.avgOverall = (locID.avgNoise + locID.avgAmen + locID.avgClean)/3
     locID.save(update_fields=['avgNoise', 'avgClean', 'avgAmen', 'avgOverall'])
-    pRev=locID.location_reviews.filter(user=curr)
-    oRev=locID.location_reviews.filter(~Q(user=curr))
+    pRev=locID.location_reviews.filter(user=curr)#user reviews
+    oRev=locID.location_reviews.filter(~Q(user=curr))#not user reviews
     return render(request, "locReviews.html", {"location":location, "pRev":pRev, "oRev":oRev})
 
 def updReview(request, loc):
@@ -238,11 +235,10 @@ def updReview(request, loc):
     if primKey is None:
         return JsonResponse({'error': '"pk" parameter is missing'}, status=400)
 
-    #int(primKey)
+    #gets the current location and the review being updates
     location=Locations.objects.get(name=loc)
-    #logger.info("Location: %s", loc)
-    Review=location.location_reviews.get(pk=primKey)#I think the problem is with how primJey is parsed, it is noo
-    #logger.info("Primary Key: %s", primKey)
+    Review=location.location_reviews.get(pk=primKey)
+    #like amount is increased by val, 1 adds like -1 removes like, adds or removes the user from the like list
     if int(val)==1:
         l=likes(user=request.user, rev=Review)
         Review.like.add(l.user)
@@ -260,6 +256,7 @@ def delReview(request, loc):
     locID=Locations.objects.get(name=loc)
     Review=locID.location_reviews.get(pk=primKey)
     Review.delete()
+    #updates average ratings based on how many reviews are still assigned to the location
     if locID.location_reviews.all().count()==0:
         locID.avgAmen=0
         locID.avgClean=0
@@ -272,8 +269,8 @@ def delReview(request, loc):
         locID.avgOverall = (locID.avgNoise + locID.avgAmen + locID.avgClean)/3
     locID.save(update_fields=['avgNoise', 'avgClean', 'avgAmen', 'avgOverall'])
     curr=request.user
-    pRev=locID.location_reviews.filter(user=curr)
-    oRev=locID.location_reviews.filter(~Q(user=curr))
+    pRev=locID.location_reviews.filter(user=curr)#user reviews
+    oRev=locID.location_reviews.filter(~Q(user=curr))#not user reviews
     return render(request, "locReviews.html", {"location":locID, "pRev":pRev, "oRev":oRev})
 
 def repReview(request, loc):
@@ -283,11 +280,10 @@ def repReview(request, loc):
     if primKey is None:
         return JsonResponse({'error': '"pk" parameter is missing'}, status=400)
 
-    #int(primKey)
     location=Locations.objects.get(name=loc)
-    #logger.info("Location: %s", loc)
-    Review=location.location_reviews.get(pk=primKey)#I think the problem is with how primJey is parsed, it is noo
-    #logger.info("Primary Key: %s", primKey)
+    Review=location.location_reviews.get(pk=primKey)
+    #changes report amout based on val, 1 increases and -1 decreases
+    #adds the user to list of users who reported the review
     if int(val)==1:
         r=reports(user=request.user, rep=Review)
         Review.report.add(r.user)
@@ -295,9 +291,11 @@ def repReview(request, loc):
         Review.report.remove(request.user)
 
     count= Review.report.count()
-    maxRep=1
+    #max rep the max amount of dislikes before the review is removed
+    maxRep=1#adjustable
     if(count>=maxRep):
         Review.delete()
+        #adjusts the average ratings if review is deleted
         if location.location_reviews.all().count()==0:
             location.avgAmen=0
             location.avgClean=0
@@ -309,7 +307,8 @@ def repReview(request, loc):
             location.avgClean = LocationReviews.objects.filter(location=location).aggregate(Avg('cleanlinessRating'))['cleanlinessRating__avg']
             location.avgOverall = (location.avgNoise + location.avgAmen + location.avgClean)/3
         location.save(update_fields=['avgNoise', 'avgClean', 'avgAmen', 'avgOverall'])
-    primKey=0
+        #lowest primary key is 1, so 0 indicates the review was deleted
+        primKey=0
     ret=[{'pk':primKey}]
     return JsonResponse(ret,safe=False)
 
@@ -336,6 +335,7 @@ def accountSettings(request):
 @login_required
 @ensure_csrf_cookie
 def update_password(request):
+    #updates the password and returns success to frontend
     if request.method == 'POST':
         new_password = request.POST.get('new_password')
 
@@ -354,7 +354,7 @@ def update_password(request):
 @ensure_csrf_cookie
 @csrf_protect
 def verify_current_password(request):
-
+    #Checks the verify password and password match and raises status 400 if it doesn't
     if request.method == 'POST':
         current_password = request.POST.get('current_password')
         user = request.user
@@ -373,15 +373,15 @@ def update_name(request):
         user = request.user
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
-
+        #checks which name(s) to change
         if first_name:
             user.first_name = first_name
         if last_name:
             user.last_name = last_name
-
+        #saves the change and informs frontend
         user.save()
         return JsonResponse({"success": True, "message": "Name updated successfully!"})
-
+    #error and informs frontend
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
 
 
@@ -436,7 +436,7 @@ def verify_email(request):
     code = str(random.randint(100000, 999999))
     verification_codes[email] = code
     print(code)
-
+    #tries to send email to given email from admin email
     try:
         send_mail(
             'Your Verification Code',
@@ -459,7 +459,7 @@ def check_verification_code(request):
     if request.method == "POST":
         email = request.POST.get('email')
         code_entered = request.POST.get('code')
-        
+        #checks if the verification code is correct
         if verification_codes.get(email) == code_entered:
             return JsonResponse({"success": True})
         else:
@@ -474,17 +474,20 @@ def UoSList(request):
 @login_required
 def UoSSearch(request):
     search=request.GET.get('search','')
+    #gets all UoS objects that match the user input
     results=UoS.objects.filter(Q(name__icontains=search) | Q(code__icontains=search))
+    #send the UoS values back to frontend
     res=[{'name':result.name, 'code':result.code, 'description':result.description} for result in results]
     return JsonResponse(res, safe=False)
 
 @login_required
 def UoStudy(request, Uos):
+    #if UoS doesn't exist, throws an error
     try:
         UoStudy=UoS.objects.get(name=Uos)
         curr=request.user
-        pCom=UoStudy.uos_comment.filter(user=curr)
-        oCom=UoStudy.uos_comment.filter(~Q(user=curr))
+        pCom=UoStudy.uos_comment.filter(user=curr)#user comments
+        oCom=UoStudy.uos_comment.filter(~Q(user=curr))#not user comments
     except UoS.DoesNotExist:
         raise Http404("Unit of study does not exist")
     return render(request, "UoS.html", {"UoS":UoStudy, "pCom":pCom, "oCom":oCom})
@@ -494,10 +497,11 @@ def subUoS(request, Uos):
     com= request.GET.get('com')
     curr=request.user
     UoStudy=UoS.objects.get(name=Uos)
+    #creates a UoSComment object using the user input and asigns it to the current user and UoS
     comment=UoSComment(user=curr, comment = com, uos = UoStudy)
     comment.save()
-    pCom=UoStudy.uos_comment.filter(user=curr)
-    oCom=UoStudy.uos_comment.filter(~Q(user=curr))
+    pCom=UoStudy.uos_comment.filter(user=curr)#user comments
+    oCom=UoStudy.uos_comment.filter(~Q(user=curr))#not user comments
     return render(request, "UoS.html", {"UoS":UoStudy, "pCom":pCom, "oCom":oCom})
 
 def delUoS(request, Uos):
@@ -507,10 +511,11 @@ def delUoS(request, Uos):
     
     uos=UoS.objects.get(name=Uos)
     com=uos.uos_comment.get(pk=primKey)
+    #gets the comment to be deleted and deletes it
     com.delete()
     curr=request.user
-    pCom=uos.uos_comment.filter(user=curr)
-    oCom=uos.uos_comment.filter(~Q(user=curr))
+    pCom=uos.uos_comment.filter(user=curr)#user comments
+    oCom=uos.uos_comment.filter(~Q(user=curr))#not user comments
     return render(request, "UoS.html", {"UoS":uos, "pCom":pCom, "oCom":oCom})
 
 def repUoS(request, Uos):
@@ -520,11 +525,11 @@ def repUoS(request, Uos):
     if primKey is None:
         return JsonResponse({'error': '"pk" parameter is missing'}, status=400)
 
-    #int(primKey)
+    #gets comment that is reported
     Unit=UoS.objects.get(name=Uos)
-    #logger.info("Location: %s", loc)
-    Comment=Unit.uos_comment.get(pk=primKey)#I think the problem is with how primJey is parsed, it is noo
-    #logger.info("Primary Key: %s", primKey)
+    Comment=Unit.uos_comment.get(pk=primKey)
+    #Updates the report amount based on val, 1 reports, -1 unreports
+    #adds the user to the list of users that reported the comment if val=1
     if int(val)==1:
         r=UoSRep(user=request.user, rep=Comment)
         Comment.report.add(r.user)
@@ -532,10 +537,12 @@ def repUoS(request, Uos):
         Comment.report.remove(request.user)
     
     count= Comment.report.count()
-    maxRep=1
+    #if the reports go above the set max amount of reports, deletes the comment
+    maxRep=1#adjustable
     if(count>=maxRep):
         Comment.delete()
-    primKey=0  
+        #lowest primary key is 1, so 0 indicates the comment was deleted
+        primKey=0  
     ret=[{'pk':primKey}]
     return JsonResponse(ret,safe=False)
 
@@ -544,14 +551,17 @@ def request_password_reset(request):
     success_message = ""
     if request.method == "POST":
         form = EmailForm(request.POST)
+        #checks if form is filled out correctly
         if form.is_valid():
             email = form.cleaned_data.get('email')
             user = User.objects.filter(email=email).first()
             if user:
                 token = get_random_string(32)
+                #token only lasts for 1 hour
                 expiration_date = timezone.now() + timezone.timedelta(hours=1)
                 PasswordResetToken.objects.create(user=user, token=token, expiration_date=expiration_date)
                 reset_url = f"http://127.0.0.1:8000/reset-password?token={token}"
+                #sends the email to reset the password
                 send_mail('Password Reset', f'Click {reset_url} to reset your password.', 'robinwu40@gmail.com', [email])
                 success_message = "Reset link successfully sent. Please click the link sent to your email and conduct password reset."
             else:
@@ -571,6 +581,7 @@ def reset_password(request):
         return redirect('request_password_reset')
     
     reset_token = PasswordResetToken.objects.filter(token=token, expiration_date__gte=timezone.now()).first()
+    #checks that there is a valid reset_token to reset the password
     if not reset_token:
         print(f"Invalid or expired token: {token}")
         return render(request, 'reset_password.html')
@@ -580,13 +591,16 @@ def reset_password(request):
         if form.is_valid():
             new_password = form.cleaned_data.get('new_password')
             confirm_password = form.cleaned_data.get('confirm_password')
+            #checks confirm and new password are the same
             if new_password == confirm_password:
                 user = reset_token.user
+                #updates the users password and deletes the reset_token
                 user.set_password(new_password)
                 user.save()
                 reset_token.delete()
                 print(f"Password reset successfully for user: {user.username}")
                 return JsonResponse({'success': True, 'message': 'Password reset successfully.'})
+            #informs front end of error because passwords don't match
             else:
                 print("New password and confirm password do not match.")
                 print("Form errors:", form.errors)

@@ -52,7 +52,6 @@ class HomePageTest(TestCase):
 
         # Now the spelling is correct
         expected_url = reverse('location', args=["Fisher Library"])
-        print(response.content)
         self.assertContains(response, 'href="{0}"'.format(expected_url))
 
         # Simulate clicking the link

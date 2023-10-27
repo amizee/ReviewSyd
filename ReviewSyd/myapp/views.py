@@ -464,7 +464,7 @@ def UoSList(request):
 def UoSSearch(request):
     search=request.GET.get('search','')
     results=UoS.objects.filter(Q(name__icontains=search) | Q(code__icontains=search))
-    res=[{'name':result.name, 'code':result.code} for result in results]
+    res=[{'name':result.name, 'code':result.code, 'description':result.description} for result in results]
     return JsonResponse(res, safe=False)
 
 @login_required

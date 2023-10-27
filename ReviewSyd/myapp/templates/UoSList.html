@@ -87,13 +87,8 @@
                         res.append('<p>No results found</p>')
                     }
                     else{
-                        Array.prototype.slice.call(data).forEach((UoS, index)=>{
-                            if (index == 0) {
-                                res.append("<div><button class=\"uos-button w-100\" onclick=\"location.href = '\/UoS\/" + UoS.name + "\/'\">" + UoS.code + ": " + UoS.name + "</button></div>")
-                            }
-                            else {
-                                res.append("<div><button class=\"w-100\" onclick=\"location.href = '\/UoS\/" + UoS.name + "\/'\">" + UoS.code + ": " + UoS.name + "</button></div>")
-                            };
+                        Array.prototype.slice.call(data).forEach((UoS)=>{
+                                res.append("<div class='col'> <div class='card h-100 mx-auto' style='width: 40rem;''> <div class='card-body'><h5 class='card-title'>"+ UoS.code+" :  "+UoS.name+" </h5><a href='#'' class='view-description' style='color: grey;''>view description</a>&nbsp;&nbsp;<p class='description' style='display:none;''>{{"+ UoS.description+"}} </p><a href='\/UoS\/"+UoS.name+"\/' >  View Comments</a> </div></div></div>")
                         })
                     }
                 },

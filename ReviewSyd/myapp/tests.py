@@ -1,4 +1,4 @@
-from .models import Tutor, UoSComment, LocationReviews, Locations, UoS
+from .models import Reviews, Tutor, UoSComment, LocationReviews, Locations, UoS
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.test import TestCase, RequestFactory, Client
 from myapp.models import User, PasswordResetToken
@@ -6,7 +6,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth.models import User
 from myapp.models import UserProfile 
 from myapp.forms import EmailForm
-from .views import logout_view, send_feedback_email
+from .views import location, logout_view, send_feedback_email
 from django.contrib.messages import get_messages
 from django.contrib.auth import get_user_model
 from myapp.views import verification_codes
@@ -125,6 +125,13 @@ class TermsAndConditionsTest(TestCase):
         # Check that the response status code is 200 (OK)
         self.assertEqual(response.status_code, 200)
 
+class FAQTest(TestCase):
+    def FAQ_view_renders_ts_template(self):
+        response = self.client.get(reverse('FAQ'))
+
+        self.assertTemplateUsed(response, 'faq.html')
+
+        self.assertEqual(response.status_code, 200)
 
 class LogoutViewTest(TestCase):
     def setUp(self):
@@ -622,3 +629,29 @@ class UoSTest(TestCase):
     def test_uos_comment(self):
         uosC=UoSComment.objects.get(user=self.user)
         self.assertEqual(uosC.comment, "test com")
+
+class LocationReviewTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.client.login(username='testuser', password='testpassword')
+
+        self.location = Locations.objects.create(name='TestLocation')
+
+        self.review = LocationReviews.objects.create(
+            user=self.user,
+            location=self.location,
+            cleanlinessRating=4,
+            amenitiesRating=5,
+            noisinessRating=3,
+            writtenReview='This is a test review.'
+        )
+
+        def test_loc_reviews_page(self):
+        # Assuming your URL name is 'locReviews'
+            url = reverse('locReviews', kwargs={'loc': self.location.name})
+            response = self.client.get(url)
+
+            # Check if the response status code is 200 (OK)
+            self.assertEqual(response.status_code, 200)
+
+    

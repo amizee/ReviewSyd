@@ -1,5 +1,6 @@
-{%extends "hf.html"%}
+{%extends "hf.html"%}{%block title%}Map{%endblock%}
 {%block content%}
+
     <style>
         #map {
             width: 120vh;
@@ -12,7 +13,6 @@
     <div class="container" style="margin-bottom: 100px;">
         <div class="row">
             <div class="col-12 d-flex justify-content-center align-items-center">
-                <!-- add a new frame to include button and map, and up shift button a bit-->
                 <div>
                     <div id="map"></div>
                 </div>
@@ -23,13 +23,25 @@
         function initMap() {
             let usyd = {lat: -33.889822895943595, lng: 151.19212139725983};
             let map = new google.maps.Map(
-                document.getElementById('map'), {zoom: 16, center: usyd, mapId: "fb18a56d52995976"}
+                document.getElementById('map'), {zoom: 17, center: usyd, mapId: "fb18a56d52995976"}
             );
 
             addMarker({lat:-33.89020127405104, lng: 151.19306296611663}, 'PNR Learning Hub');
             addMarker({lat:-33.88633127082905, lng:151.1904071550552}, 'Fisher Library');
             addMarker({lat: -33.892248400281936, lng: 151.19099221979099}, 'Abercrombie Learning Hub');
-            addMarker({lat: -33.888250391622506, lng: 151.19070892740163}, 'Carslaw Learning Hub');
+            addMarker({lat: -33.88623746929633, lng: 151.18753686334404}, 'Brennan MacCallum Learning Hub');
+            addMarker({lat: -33.888732585919826, lng: 151.18451524985167}, 'Create Space');
+            addMarker({lat: -33.88716293889776, lng: 151.1906393498515}, 'Law Library');
+            addMarker({lat: -33.88897350771981, lng: 151.19130846931353}, 'SciTech Library');
+            addMarker({lat: -33.88842886380476, lng: 151.1857326042837}, 'Susan Wakil Health Building Library');
+            addMarker({lat: -33.885430215401456, lng: 151.18736434985138}, 'The Quarter');
+            addMarker({lat: -33.88929731352645, lng: 151.19085054232835}, 'Think Space');
+            addMarker({lat: -33.8920256319258, lng: 151.19133336519502}, 'Abercrombie Terrace');
+            addMarker({lat: -33.888031340801305, lng: 151.19048466519484}, 'Carslaw Kitchen');
+            addMarker({lat: -33.88499896061133, lng: 151.1872493210156}, 'Courtyard Restaurant & Bar');
+            addMarker({lat: -33.8881250598692, lng: 151.19010335170225}, 'Eastern Ave Coffee Cart');
+            addMarker({lat: -33.889490540075876, lng: 151.1906377576716}, "Hermann's Bar");
+            addMarker({lat: -33.889586003544146, lng: 151.19047774716034}, 'Wentworth Food Court');
 
             function addMarker(coords, name){
                 var marker = new google.maps.Marker({
@@ -37,7 +49,7 @@
                     map: map, 
                     icon: {
                         path: "M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z",
-                        fillColor: "blue", 
+                        fillColor: "#E74726", 
                         fillOpacity: 0.7, 
                         scale: 1.4, 
                     }
@@ -48,10 +60,13 @@
                 const url = `/location/${name}/`;
                 const infoWindow = new google.maps.InfoWindow(infoWindowOptions);
                 const infoWindowOpen = {map: map, anchor: marker};
-                infoWindow.setContent(`
-                    <h6>${name}</h6>
-                    <a href="${url}">More information</a>
-                `);
+                const infoWindowContent = `
+                    <a style="color:#E74726;" href="${url}">${name}</a><br>
+                    ${name === 'Fisher Library' ? `<a style="color:#E74726;" href="/location/Rare Books and Special Collections/">Rare Books and Special Collections</a>` : ''}
+                `;
+
+                infoWindow.setContent(infoWindowContent);
+
                 infoWindow.open(infoWindowOpen);
                 marker.addListener("click", function (){
                     infoWindow.open(infoWindowOpen);

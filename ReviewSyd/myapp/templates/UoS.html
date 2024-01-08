@@ -1,47 +1,69 @@
-{%extends "hf.html"%}
+{%extends "hf.html"%}{%block title%}{{UoS.code}}{%endblock%}
 {%block content%}
-<div class="px-5 py-5">
-    <div id="UoS" class="font-weight-bold h1 pb-3 text-center">{{UoS.code}}: {{UoS.name}}</div>
+<style>
+    .review-button {
+        background-color: #E74726; 
+        border: 2px #E74726; 
+        color: white; 
+        padding: 10px 20px;
+        text-decoration: none; 
+    }
+
+    .review-button:hover {
+        background-color: white; 
+        border: 2px solid #E74726; 
+        color: #E74726; 
+    }
+</style>
+
+<div class="container py-5">
+    <div id="UoS" class="font-weight-bold h1 text-center">{{UoS.code}}: {{UoS.name}}</div>
+    <a class="icon-link icon-link-hover pb-5" href="{% url 'UoSList' %}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/>
+        </svg>
+        Back
+    </a>
     <div class="row text-center pb-3" id="comment-container">
+        <!--comment by the user-->
         {% for com in pCom %}
-            <div class="col-md-12">
+            <div class="col-md-10 mx-auto mb-2">
                 <div class="card">
                     <div class="card-body">
                         <div class="card-text">
-                            <!-- Main row for comment details -->
-                            <div class="row no-gutters">
-                                <div>
-                                    <button id="del" class="card mx-left border-0 d-flex">
+                            <div class="row">
+                                <div class="col-3">
+                                    <h6 class="card-title" style="text-align: left;">{{com.user.first_name}} {{com.user.last_name}}</h6>
+                                </div>
+                                <div class="col-8"></div>
+                                <div class="col-1 d-flex justify-content-end">
+                                    <button id="del" class="card border-0">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                                             <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
                                         </svg>
                                         <span id="{{ com.id }}"></span>
                                     </button>
                                 </div>
-                                <div class="col-3">
-                                    <div class="card border-0">
-                                        <p class="mr-3">{{com.user.first_name}} {{com.user.last_name}}</p>
-                                    </div>
-                                </div>
-                                <div class="col-9">
-                                    <div class="card h-100">
-                                        <p class="mr-3">{{com.comment}}</p>
-                                    </div>
-                                </div>
                             </div>
+                            <p style="text-align: left;">{{com.comment}}</p>
                         </div>
                     </div>
                 </div>
             </div>
         {% endfor %}
+        <!--comment not by the user-->
         {% for com in oCom %}
-            <div class="col-md-12">
+            <div class="col-md-10 mx-auto mb-2">
                 <div class="card">
                     <div class="card-body">
                         <div class="card-text">
                             <!-- Main row for comment details -->
                             <div class="row no-gutters">
-                                <div>
+                                <div class="col-3">
+                                    <h6 class="card-title" style="text-align: left;">{{com.user.first_name}} {{com.user.last_name}}</h6>
+                                </div>
+                                <div class="col-8"></div>
+                                  <div class="col-1 d-flex justify-content-end">
                                     {% if user in com.report.all %}
                                         <button id="reported" class="card mx-left border-0 d-flex">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag-fill" viewBox="0 0 16 16">
@@ -58,38 +80,23 @@
                                         </button>
                                     {% endif %}
                                 </div>
-                                <div class="col-3">
-                                    <div class="card border-0">
-                                        <p class="mr-3">{{com.user.first_name}} {{com.user.last_name}}</p>
-                                    </div>
-                                </div>
-                                <div class="col-9">
-                                    <div class="card h-100">
-                                        <p class="mr-3">{{com.comment}}</p>
-                                    </div>
-                                </div>
                             </div>
+                            <p style="text-align: left;">{{com.comment}}</p>
                         </div>
                     </div>
                 </div>
             </div>
         {% endfor %}
-        {% if UoS.uos_comment.all|length > 3 %}
-        <div class="pt-3">
-            <button id="loadMore" class="btn btn-secondary btn-sm mb-2 btn-block ">
-                Load More
-            </button>
-        </div>
-        {% endif %}
     </div>
+    <!--add comment form-->
     <form id="commentForm" class="needs-validation mx-auto w-50 card text-center px-3" novalidate>
         <div class="py-2">
             <label for="Comment" class="form-label">Comment</label>
-            <input type="text" class="form-control" id="Comment" rows="5" placeholder="Comment" style="border: 1px solid #ccc;" required>
+            <textarea type="text" class="form-control" id="Comment" rows="3" placeholder="Comment" style="border: 1px solid #ccc;" required></textarea>
             <div class="invalid-feedback">Missing field</div>
         </div>
         <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary btn-sm mb-2 btn-block ">Submit Comment</button>
+            <button type="submit" class="btn btn-sm mb-2 review-button">Submit Comment</button>
         </div>
     </form>
 </div>
@@ -98,7 +105,7 @@
 <script>
     $(document).ready(()=>{
         "use strict"
-        $('#commentForm').submit((e)=>{
+        $('#commentForm').submit((e)=>{//validates the form and ajax request to add the data to the database
             var form=$('#commentForm')
             if(!form[0].checkValidity()){
                 e.preventDefault()
@@ -112,7 +119,7 @@
                 url: 'submit/',
                 type: 'GET',
                 data: {'com':com},
-                success:()=>{
+                success:(data)=>{
                     location.reload()
                 },
                 error: (error)=>{console.log(error)},
@@ -143,7 +150,7 @@
             })
         }
     })
-    unreport=(repb)=>{
+    unreport=(repb)=>{//unreports the review to reduce the reports and change report icon
         var pk=$(repb).find('span').attr('id');
         repb.empty()
         repb.removeAttr('id')
@@ -163,7 +170,7 @@
             report($(repb))
         })
     }
-    report=(unrepb)=>{
+    report=(unrepb)=>{//reports the review to increase the reports and change report icon
         var pk=$(unrepb).find('span').attr('id');
         unrepb.empty()
         unrepb.removeAttr('id')
@@ -174,7 +181,12 @@
             type: 'GET',
             data: {'val':1, 'pk':pk},
             success:(data)=>{
-                unrepb.append('<span id="' + data[0].pk + '"></span>')
+                if(data[0].pk==0){
+                    location.reload()
+                }
+                else{
+                    unrepb.append('<span id="' + data[0].pk + '"></span>')
+                }
             },
             error: (error)=>{console.log(error)},
         })
@@ -183,7 +195,7 @@
             unreport($(unrepb))
         })
     }
-    del=(btn)=>{
+    del=(btn)=>{//deletes review and reloads the page to remove it
         var pk=$(btn).find('span').attr('id');
         $.ajax({
             url: 'del/',

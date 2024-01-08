@@ -3,44 +3,145 @@
 {% block content %}
 {% load static %}
 
-<div class="font-weight-bold h1 pb-3 text-center">Find a tutor</div>
+<div class="font-weight-bold h1 pb-3 text-center" style="margin-top: 40px;">Find a tutor</div>
 
     <!-- Include the Bootstrap JS library -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <style>
+    /* Pagination styles */
+    .pagination li.page-item a.page-link {
+        background-color: white;
+        color: rgb(64, 64, 217);
+        border: 1px solid rgb(64, 64, 217);
+        border-radius: 5px;
+        margin-right: 8px;
+    }
 
-.tutor-description {
-  max-width: 100%; /* Set to 100% to allow it to take up full width */
-  word-wrap: break-word; /* Allows breaking words if they exceed container's width */
-  overflow: hidden; /* Hide the scrollbar */
+    .pagination li.page-item.active a.page-link,
+    .pagination li.page-item a.page-link:hover,
+    .pagination li.page-item a.page-link:focus {
+        background-color: rgb(64, 64, 217);
+        color: white;
+    }
+
+    .pagination li.page-item span.page-link {
+        border: 1px solid transparent;
+        margin-right: 10px;
+    }
+
+    .pagination li.page-item form {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .pagination li.page-item form input[type="text"] {
+        border-radius: 5px;
+        text-align: center;
+        padding: 10px;
+    }
+
+
+    #tutorsList {
+    max-width: 1000px; 
+    margin: 0 auto;   
 }
 
-.card {
-  overflow: hidden;
+
+  .tutor-card {
+      height: 500px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;  /* Prevents the card from expanding beyond its set height */
+      margin-bottom: 40px;
+  }
+
+  .tutor-card .card-header {
+    flex-grow: 0;
+    height: 280px;
+    overflow: hidden;
 }
 
-.card:hover {
-  overflow-y: auto;
+.tutor-card .card-body {
+    flex-grow: 1;
+    max-height: 200px;  /* Height of the card minus the header height */
+    overflow-y: auto;
+    padding: 20px;
 }
 
-.card:hover::-webkit-scrollbar {
-  width: 10px;
+.tutor-card .card-header img {
+    width: 100%;  
+    height: 100%; 
+    object-fit: cover;  
 }
 
-.card:hover::-webkit-scrollbar-thumb {
-  background-color: lightgrey;
-}
 
+    .tutor-card .card-title {
+        margin-bottom: 15px;
+    }
+
+    .tutor-card .text-muted {
+        margin-bottom: 15px;
+    }
+
+    .tutor-card .tutor-description, .tutor-card small {
+        margin-bottom: 15px;
+    }
+
+    /* Custom styles for the select dropdown */
+    .select-wrapper {
+        position: relative;
+        width: 100%;
+    }
+
+    .custom-select {
+        appearance: none;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding-right: 30px;
+        cursor: pointer;
+    }
+
+    .select-wrapper::after {
+        content: "\25BC";
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+
+    .ad-button {
+        background-color: #E74726; 
+        border: 2px solid #E74726; 
+        color: white; 
+        padding: 9px 15px;
+        text-decoration: none; 
+    }
+
+    .ad-button:hover {
+        background-color: white; 
+        border: 2px solid #E74726; 
+        color: #E74726; 
+    }
 </style>
 
 <div class="container">
     <div class="row my-4">
-        <div class="col-md-5 mx-auto">
-            <input type="text" class="form-control" id="search" placeholder="Search for tutors..." onkeyup="searchFunction()">
+        <div class="col-md-6 mx-auto">
+          <form method="get" action="{% url 'findTutor' %}" id="searchForm">
+            <div class="input-group">
+                <input type="text" class="form-control rounded" name="search" id="search" value="{{ search_query }}" placeholder="Search tutors...">
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-secondary" style="height: 42px; margin-left: 5px;" id="clearSearch" >Clear</button>
+                </div>
+            </div>
+        </form>
         </div>
         <!-- Add Button -->
         <div class="col-md-1">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTutorModal" style="white-space: nowrap; padding: 10px 15px; margin-left: -130px;">Post an Ad</button>
+            <button type="button" class="btn ad-button" data-bs-toggle="modal" data-bs-target="#addTutorModal" style="margin-left: -190px;">Post an Ad</button>
         </div>
     </div>
 
@@ -52,74 +153,107 @@
         </div>
         <!-- Loop to generate tutors from database -->
         {% for tutor in tutors %}
-        <div class="col-md-5 tutor">
-          <!-- remove button -->
+        <div class="col-md-4 mb-2 mx-auto">
+            <div class="card tutor-card">
+                <div class="card-header p-0">
+                    {% if tutor.image %}
+                    <img src="{{ tutor.image.url }}" class="img-fluid rounded-top" alt="Profile Image">
+                    {% else %}
+                    <img src="{% static 'images/default_profile.png' %}" class="img-fluid rounded-top" alt="Profile Image">
+                    {% endif %}
+                </div>
+        
+                <div class="card-body text-center">
+                    <h4 class="card-title">{{ tutor.name }}</h4>
+                    <p class="text-muted">{{ tutor.subject }}</p>
+        
+                    <hr>
+                    <p><small class="text-muted">Email: <a href="mailto:{{ tutor.email }}" target="_blank">{{ tutor.email }}</a></small></p>
 
-          {% if request.user == tutor.user %}
-              <!-- Remove Button -->
-              <form method="post" action="{% url 'remove_tutor' tutor.id %}">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-danger btn-sm">Remove</button>
-              </form>
-          {% endif %}
-          
-          <div class="card" style="height: 300px;">
-            {% if tutor.image %}
-                <img src="{{ tutor.image.url }}" alt="Profile Image" style="width: 70px; height: 70px; margin-right: 80px; margin-left: 18px; margin-top: 18px;">
-            {% else %}
-                <img src="{% static 'images/default_profile.png' %}" alt="Profile Image" style="width: 70px; height: 70px; margin-right: 80px; margin-left: 18px; margin-top: 18px;">
-            {% endif %}
-            <div class="card-body">
-              <h5 class="name card-title">Name: {{ tutor.name }}</h5>
-              <p class="subject card-text">Subject: {{ tutor.subject }}</p>
-              <p class="card-text">Email: {{ tutor.email }}</p>
-              <p class="tutor-description card-text">Description:<br> 
-                {% if tutor.description %}
-                    {{ tutor.description }}
-                {% else %}
-                    Tutor left nothing here.
-                {% endif %}
-              </p>
+                    <hr>
+                    
+                    <p class="card-text tutor-description">
+                        {% if tutor.description %}
+                        {{ tutor.description }}
+                        {% else %}
+                        Tutor left nothing here.
+                        {% endif %}
+                    </p>
+                    
+                    
+        
+                    {% if request.user == tutor.user %}
+                    <!-- Remove Button -->
+                    <form method="post" action="{% url 'remove_tutor' tutor.id %}" class="d-inline-block">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                    </form>
+                    {% endif %}
+                </div>
             </div>
-          </div>
+        </div>
+        
+        {% empty %}
+        <!-- Displayed when no results are found -->
+        <div class="col-12 text-center mt-4">
+            <h4>No related tutor found.</h4>
         </div>
         {% endfor %}
+
     </div>
 
-    <script>
-    // This function is called when the user types in the search bar.
-    function searchFunction() {
-        // Declaring variables for input, filter, tutors, tutor, name, subject, i, and txtValue.
-        let input, filter, tutors, tutor, name, subject, i, txtValue;
-        let found = false; // Variable to track if a matching resume is found.
-        input = document.getElementById('search');
-        filter = input.value.toUpperCase();
-        tutors = document.getElementsByClassName('tutor');
-        // Looping through each tutor.
-        for (i = 0; i < tutors.length; i++) {
-            tutor = tutors[i];
-            name = tutor.getElementsByClassName('name')[0];
-            subject = tutor.getElementsByClassName('subject')[0];
-            txtValue = name.textContent || name.innerText;
-            txtValue += subject.textContent || subject.innerText;
-            // Checking if the text from the name and subject matches the search filter.
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                // If a match is found, the tutor is displayed and found is set to true.
-                tutors[i].style.display = "";
-                found = true;
-            } else {
-                // If no match is found, the tutor is not displayed.
-                tutors[i].style.display = "none";
-            }
-        }
-        // If no matches are found after looping through all tutors, display a no results found message.
-        if (!found) {
-            document.getElementById('noResults').style.display = 'block';
-        } else {
-            document.getElementById('noResults').style.display = 'none';
-        }
-    }
-    </script>
+    
+    <ul class="pagination" style="margin-top: -140px; margin-bottom: 120px; margin-left: 480px;">
+      {% with search_param=request.GET.search|default:'' %}
+      {% if 1 not in page_range %}
+          <li class="page-item">
+              <a class="page-link" href="?search={{ search_param }}&page=1">1</a>
+          </li>
+          <li class="page-item disabled">
+              <span class="page-link">...</span>
+          </li>
+      {% endif %}
+  
+      {% for i in page_range %}
+          {% if i == page %}
+              <li class="page-item active">
+                  <a class="page-link" href="?search={{ search_param }}&page={{ i }}" style="background-color: rgb(64, 64, 217); color: white;">{{ i }}</a>
+              </li>
+          {% else %}
+              <li class="page-item">
+                  <a class="page-link" href="?search={{ search_param }}&page={{ i }}">{{ i }}</a>
+              </li>
+          {% endif %}
+      {% endfor %}
+  
+      {% if paginator.num_pages not in page_range %}
+          <li class="page-item disabled">
+              <span class="page-link">...</span>
+          </li>
+          <li class="page-item">
+              <a class="page-link" href="?search={{ search_param }}&page={{ paginator.num_pages }}">{{ paginator.num_pages }}</a>
+          </li>
+      {% endif %}
+      <li class="page-item">
+        <form method="get">
+          <input type="hidden" name="search" value="{{ search_param }}">
+          <input type="text" name="page" placeholder="1" style="margin-left: 20px; width: 50px; height: 36px; border-radius: 4px; border: 1px solid #ccc; padding: 0 8px;"> 
+          <button type="submit" style="background-color: #2c3e50; color: #fff; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer; transition: background-color 0.3s;">Go</button>
+        </form>
+      </li>
+      {% endwith %}
+  </ul>
+  
+
+  <script>
+    document.getElementById('clearSearch').addEventListener('click', function() {
+      document.getElementById('search').value = '';  // Clear the search input
+      document.getElementById('searchForm').submit();  // Submit the form to load the normal page
+    });
+  </script>
+    
+
+    
 
     <!-- Modal -->
     <div class="modal fade" id="addTutorModal" tabindex="-1" aria-labelledby="addTutorModalLabel" aria-hidden="true">
@@ -136,19 +270,47 @@
               {% csrf_token %}
               <div class="mb-3">
                 <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control" id="name" name="name" required>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Your Name" required>
               </div>
+
               <div class="mb-3">
                 <label for="subject" class="form-label">Subject</label>
-                <input type="text" class="form-control" id="subject" name="subject" required>
-              </div>
+                <div class="select-wrapper custom-select-wrapper">
+                    <select class="form-control custom-select" id="subject" name="subject"   required>
+                        <option value="" disabled selected>Select a subject</option>
+                        <option value="Accounting">Accounting</option>
+                        <option value="Biology">Biology</option>
+                        <option value="Business Administration">Business Administration</option>
+                        <option value="Chemistry">Chemistry</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Economics">Economics</option>
+                        <option value="Education">Education</option>
+                        <option value="Electrical Engineering">Electrical Engineering</option>
+                        <option value="English Literature">English Literature</option>
+                        <option value="Finance">Finance</option>
+                        <option value="History">History</option>
+                        <option value="Law">Law</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Mechanical Engineering">Mechanical Engineering</option>
+                        <option value="Medicine">Medicine</option>
+                        <option value="Philosophy">Philosophy</option>
+                        <option value="Physics">Physics</option>
+                        <option value="Political Science">Political Science</option>
+                        <option value="Psychology">Psychology</option>
+                        
+                    </select>
+                </div>
+            </div>
+            
+
               <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email" required>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Your Email" required>
               </div>
               <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                <textarea class="form-control" id="description" name="description" rows="3" placeholder="Your description here. You can leave empty here"></textarea>
               </div>
               <div class="mb-3">
                 <label for="image" class="form-label">Profile Image</label>
@@ -160,6 +322,7 @@
         </div>
       </div>
     </div>
+
 
 </div>
 {% endblock %}

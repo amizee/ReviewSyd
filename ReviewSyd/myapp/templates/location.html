@@ -1,4 +1,4 @@
-{%extends "hf.html"%}{%block title%}location{%endblock%}
+{%extends "hf.html"%}{%block title%}{{location.name}}{%endblock%}
 {%block content%}
 {% load static %}
 
@@ -19,13 +19,19 @@
 </style>
 
 
-    <div class="px-5">
+    <div class="container">
         <br>
         <br>
         <div class="font-weight-bold h1 pb-3 text-center">{{location.name}}</div>
-        <br>
+        <a class="icon-link icon-link-hover pb-5" href="{% url 'location list' %}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z"/>
+            </svg>
+            Back
+        </a>
         <br>
         <div class="row">
+            <!--Adds the location descriptions that are available-->
             <div class="col-6">
                 {% if location.location != "" %}
                     <div class="row" style="font-size: 18px;">
@@ -35,8 +41,9 @@
                         </svg>
                         <div class="col-11">{{location.location}}</div>
                     </div>
+                    <br>
                 {%endif%}
-                <br>
+                
                 {% if location.phone_number != "" %}
                     <div class="row" style="font-size: 18px;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill col-1" viewBox="0 0 16 16">
@@ -44,8 +51,9 @@
                         </svg>
                         <div class="col-11">{{location.phone_number}}</div>
                     </div>
+                    <br>
                 {%endif%}
-                <br>
+                
                 {% if location.hours != "" %}
                     <div class="row" style="font-size: 18px;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock-fill col-1" viewBox="0 0 16 16">
@@ -53,82 +61,77 @@
                         </svg>
                         <div class="col-11">{{location.hours}}</div>
                     </div>
+                    <br>
                 {%endif%}
-                <br>
+                
                 {% if location.website != "" %}
                     <div class="row" style="font-size: 18px;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-browser-chrome class=1 col-1" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M16 8a8.001 8.001 0 0 1-7.022 7.94l1.902-7.098a2.995 2.995 0 0 0 .05-1.492A2.977 2.977 0 0 0 10.237 6h5.511A8 8 0 0 1 16 8ZM0 8a8 8 0 0 0 7.927 8l1.426-5.321a2.978 2.978 0 0 1-.723.255 2.979 2.979 0 0 1-1.743-.147 2.986 2.986 0 0 1-1.043-.7L.633 4.876A7.975 7.975 0 0 0 0 8Zm5.004-.167L1.108 3.936A8.003 8.003 0 0 1 15.418 5H8.066a2.979 2.979 0 0 0-1.252.243 2.987 2.987 0 0 0-1.81 2.59ZM8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
                         </svg>
-                        <a class="col-11" style="color:#E74726;" href='{{location.website}}'>{{location.name}}'s Website</a>
+                        <a class="col-11" style="color:rgb(231, 71, 38);" href='{{location.website}}'>{{location.name}}'s Website</a>
                     </div>
+                    <br>
                 {%endif %}
-                <br>
+                
                 {% if location.amenities.all %}
-    <div class="row" style="font-size: 18px;">
-        {% for amenity in location.amenities.all %}
-            <div class="col-md-4">
-                <img src="{{amenity.image.url}}" alt="{{ amenity.name }}" style="width: 100px; height: 100px; margin-right: 20px;">
-                <div>{{ amenity.name }}</div>
-            </div>
-        {% endfor %}
-    </div>
-{% endif %}
-
-
+                    <div class="container" style="text-align: center;">
+                        <div class="row" style="font-size: 18px;">
+                            {% for amenity in location.amenities.all %}
+                                <div class="col-4">
+                                    <img src="{{amenity.image.url}}" alt="{{ amenity.name }}" style="height: 90px; width: 90px;">
+                                    <div style="text-align: center;">{{ amenity.name }}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
             </div> 
             <div class="col-6">
                 {% if location.image%}
                     <div class="col-6" style="margin-left: 150;">
-                        <img src="{{ location.image.url }}" alt="Location Image" style="width: 500px; height: 500px;">
+                        <img src="{{ location.image.url }}" alt="Location Image" style="width: 640px; height: 480px;">
                     </div>
                 {%else%}
-                    <img src="{% static 'images/default_location.png' %}" alt="Location Image" style="width: 500px; height: 500px;">
+                    <img src="{% static 'images/default_location.png' %}" alt="Location Image" style="width: 640px; height: 480px;">
                 {%endif%}
             </div>
         </div>
+        <hr class="my-4 bg-dark"/>
         <div class="mx-auto w-50">
             <div class="w-100 border-0">
                 <div class="row py-2">
                     <div class="col-4 mx-auto">
                         <div class="card">
-                            <div class="card-body text-center d-flex flex-column justify-content-center align-items-center" style="width: 250px; height: 100px;">
-                                <h5 class="card-title">Cleanliness Rating</h5>
+                            <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
+                                <h6 class="card-title">Cleanliness Rating</h6>
                                 <p class="card-text">{{location.avgClean}}</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-4 mx-auto">
                         <div class="card">
-                            <div class="card-body text-center d-flex flex-column justify-content-center align-items-center" style="width: 250px; height: 100px;">
-                                <h5 class="card-title">Amenities Rating</h5>
+                            <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
+                                <h6 class="card-title">Amenities Rating</h6>
                                 <p class="card-text">{{location.avgAmen}}</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-4 mx-auto">
                         <div class="card">
-                            <div class="card-body text-center d-flex flex-column justify-content-center align-items-center" style="width: 250px; height: 100px;">
-                                <h5 class="card-title">Noise Level Rating</h5>
+                            <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
+                                <h6 class="card-title">Noise Level Rating</h6>
                                 <p class="card-text">{{location.avgNoise}}</p>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-
-                <div style="text-align: right; margin-top: 15px; ">
-                <a class="custom-button" href="/location/{{location.name}}/reviews/" style="margin-left: -225px; border: 2px solid;">View/Leave Reviews</a>
-                </div>
-
-
-                </div>
-                
+                    <div class="mt-4" style="text-align: center;">
+                        <a class="custom-button rounded" href="/location/{{location.name}}/reviews/" style="border: 2px solid;">View/Leave Reviews</a>
+                    </div> 
+                </div>         
             </div>
         </div>
-        <br>
-        <br>
-        <br>
+        <hr class="my-4 bg-dark"/>
         <div class="row"  style="margin-bottom: 80px; margin-left: 30px">
             <div class="col-6 h4">
                 Nearby POI

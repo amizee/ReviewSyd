@@ -1,0 +1,10 @@
+@media (max-width: 992px) {
+    .sd-margin {
+        margin-bottom: 125px;
+    }
+
+    #botNavbar {
+        /* display: flex; */
+        justify-content: flex-start !important;
+    }
+}

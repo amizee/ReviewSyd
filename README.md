@@ -1,5 +1,5 @@
 # ReviewSyd
-A review website for USYD amenities and study locations, and provides a place to advertise tutors. Developed in Django and uses an SQLite database.
+A review website for USYD study locations, and provides a place to advertise tutors. Developed in Django, JavaScript, and uses an SQLite database.
 
 External Libraries:
 Bootstrap 5.3.2
